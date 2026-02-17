@@ -23,11 +23,11 @@ func TestCalcAddition(t *testing.T) {
 		result, error := calculations.Calculate(test.input)
 
 		if error != nil {
-			t.Fatal("Fatal error in calc function, test Addition", error)
+			t.Fatal("Fatal error in calc function, test:", test.name, i, error)
 		}
 
 		if !utils.Float64Compare(result, test.expected) {
-			t.Error(test.name, i)
+			t.Errorf("Error. Test: %v, %v. Expected %v, got %v", test.name, i, test.expected, result)
 		}
 	}
 
@@ -49,11 +49,11 @@ func TestCalcSubtraction(t *testing.T) {
 		result, error := calculations.Calculate(test.input)
 
 		if error != nil {
-			t.Fatal("Fatal error in calc function, test Subtraction", error)
+			t.Fatal("Fatal error in calc function, test:", test.name, i, error)
 		}
 
 		if !utils.Float64Compare(result, test.expected) {
-			t.Error("subtraction test error", i)
+			t.Errorf("Error. Test: %v, %v. Expected %v, got %v", test.name, i, test.expected, result)
 		}
 	}
 }
@@ -78,11 +78,11 @@ func TestCalcMultiplication(t *testing.T) {
 		result, error := calculations.Calculate(test.input)
 
 		if error != nil {
-			t.Fatal("Fatal error in calc function, test Multiplication", error)
+			t.Fatal("Fatal error in calc function, test:", test.name, i, error)
 		}
 
 		if !utils.Float64Compare(result, test.expected) {
-			t.Error("miltiplication test error", i)
+			t.Errorf("Error. Test: %v, %v. Expected %v, got %v", test.name, i, test.expected, result)
 		}
 	}
 }
@@ -107,16 +107,16 @@ func TestCalcDivision(t *testing.T) {
 		result, error := calculations.Calculate(test.input)
 
 		if error != nil {
-			t.Fatal("Fatal error in calc function, test Division", error)
+			t.Fatal("Fatal error in calc function, test:", test.name, i, error)
 		}
 
 		if !utils.Float64Compare(result, test.expected) {
-			t.Error("division test error", i, "expected", test.expected, "get", result)
+			t.Errorf("Error. Test: %v, %v. Expected %v, got %v", test.name, i, test.expected, result)
 		}
 	}
 }
 
-func TestParenthesesCalc(t *testing.T) {
+func TestCalcParentheses(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    string
@@ -134,11 +134,11 @@ func TestParenthesesCalc(t *testing.T) {
 		result, error := calculations.Calculate(test.input)
 
 		if error != nil {
-			t.Fatal("Fatal error in calc function, test Parentheses", error)
+			t.Fatal("Fatal error in calc function, test:", test.name, i, error)
 		}
 
 		if !utils.Float64Compare(result, test.expected) {
-			t.Error("parentheses test error", i)
+			t.Errorf("Error. Test: %v, %v. Expected %v, got %v", test.name, i, test.expected, result)
 		}
 	}
 }
@@ -159,11 +159,11 @@ func TestCalcPriority(t *testing.T) {
 		result, error := calculations.Calculate(test.input)
 
 		if error != nil {
-			t.Fatal("Fatal error in calc function, test Priority", error)
+			t.Fatal("Fatal error in calc function, test:", test.name, i, error)
 		}
 
 		if !utils.Float64Compare(result, test.expected) {
-			t.Error("priority test error", i)
+			t.Errorf("Error. Test: %v, %v. Expected %v, got %v", test.name, i, test.expected, result)
 		}
 	}
 }
@@ -207,13 +207,19 @@ func TestCalcError(t *testing.T) {
 		{"empryExpression", " ", "Empty expression"},
 		{"empryExpression", "  ", "Empty expression"},
 		{"empryExpression", "                ", "Empty expression"},
+
+		{"secondDot", "1.. + 5", "Second dot in number"},
+		{"secondDot", "2.20.1 - 4", "Second dot in number"},
+		{"secondDot", "..11 * 2", "Second dot in number"},
+		{"secondDot", "4 - 2.2.2", "Second dot in number"},
+		{"secondDot", "7 / 6.6 / 1.1.1", "Second dot in number"},
 	}
 
 	for _, test := range tests {
 		_, error := calculations.Calculate(test.input)
 
 		if error.Error() != test.expectedError {
-			t.Error("error", error)
+			t.Error("Unexpected error:", error)
 		}
 
 	}
@@ -243,11 +249,11 @@ func TestCalcComplicated(t *testing.T) {
 		result, error := calculations.Calculate(test.input)
 
 		if error != nil {
-			t.Fatal("fatal error")
+			t.Fatal("Fatal error in calc function, test:", test.name, i, error)
 		}
 
 		if !utils.Float64Compare(result, test.expected) {
-			t.Error("complicated", i, "result =", result, "expected =", test.expected)
+			t.Errorf("Error. Test: %v, %v. Expected %v, got %v", test.name, i, test.expected, result)
 		}
 	}
 }
@@ -267,11 +273,11 @@ func TestCalcSpaces(t *testing.T) {
 		result, error := calculations.Calculate(test.input)
 
 		if error != nil {
-			t.Fatal("fatal error")
+			t.Fatal("Fatal error in calc function, test:", test.name, i, error)
 		}
 
 		if !utils.Float64Compare(result, test.expected) {
-			t.Error("spaces", i, "result =", result, "expected =", test.expected)
+			t.Errorf("Error. Test: %v, %v. Expected %v, got %v", test.name, i, test.expected, result)
 		}
 	}
 }

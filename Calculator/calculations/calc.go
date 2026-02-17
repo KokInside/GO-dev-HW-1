@@ -53,6 +53,7 @@ func priority(token string) int {
 	return 0
 }
 
+// Reverse Polish Notation
 func solveRPN(outQueue *[]string) (float64, error) {
 
 	var polishStack stack.Stack[float64]
@@ -102,6 +103,7 @@ func solveRPN(outQueue *[]string) (float64, error) {
 	return polishStack.Top(), nil
 }
 
+// Infix notation -> Polish notation
 func infixToPolish(tokens *[]types.Token) []string {
 
 	var operatorStack stack.Stack[string]
