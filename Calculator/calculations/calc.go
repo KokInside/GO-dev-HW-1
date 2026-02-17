@@ -89,7 +89,12 @@ func solveRPN(outQueue *[]string) (float64, error) {
 
 			}
 		} else {
-			res, _ := strconv.ParseFloat(token, 64)
+			res, parseErr := strconv.ParseFloat(token, 64)
+
+			if parseErr != nil {
+				return 0, errors.New("Can't parse float")
+			}
+
 			polishStack.Push(res)
 		}
 	}
@@ -171,6 +176,11 @@ func parseTokens(str *string) ([]types.Token, error) {
 			if hasDot == true {
 
 				return []types.Token{}, errors.New("Second dot in number")
+			}
+
+			if i == len(*str)-1 {
+
+				tokens = append(tokens, types.Token{Type: types.Number, Value: currentNumber.String()})
 			}
 
 			hasDot = true

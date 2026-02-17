@@ -2,7 +2,9 @@ package validators
 
 import (
 	"calc/types"
+	"calc/utils"
 	"errors"
+	"strconv"
 )
 
 func ValidateTokens(tokens *[]types.Token) error {
@@ -128,10 +130,18 @@ func divisionByZero(tokens *[]types.Token) error {
 
 	for _, token := range *tokens {
 
-		if token.Value == "0" && isPrevDivisor == true {
+		if isPrevDivisor == true && token.Type == types.Number {
 
-			return errors.New("Division by zero")
+			v, err := strconv.ParseFloat(token.Value, 64)
 
+			if err != nil {
+				return errors.New("Can't parse float")
+			}
+
+			if utils.Float64Compare(v, 0) {
+
+				return errors.New("Division by zero")
+			}
 		}
 
 		if token.Value == "/" {
