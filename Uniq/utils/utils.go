@@ -3,19 +3,8 @@ package utils
 import (
 	"bufio"
 	"io"
+	"strings"
 )
-
-func TrueCount(a ...bool) int {
-	var sum int
-
-	for _, i := range a {
-		if i {
-			sum++
-		}
-	}
-
-	return sum
-}
 
 func ReadLines(reader io.Reader) ([]string, error) {
 
@@ -32,4 +21,14 @@ func ReadLines(reader io.Reader) ([]string, error) {
 	}
 
 	return lines, nil
+}
+
+func ConcatStrings(str1, str2 *string) string {
+	var builder strings.Builder
+
+	builder.Grow(len(*str1) + len(*str2))
+	builder.WriteString(*str1)
+	builder.WriteString(*str2)
+
+	return builder.String()
 }

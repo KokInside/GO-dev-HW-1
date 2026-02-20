@@ -118,34 +118,6 @@ func main() {
 	*/
 
 	lines := []string{
-		// "I love music.",
-		// "I love music.",
-		// "I love music.",
-		// "",
-		// "I love music of Kartik.",
-		// "I love music of Kartik.",
-		// "Thanks.",
-		// "I love music of Kartik.",
-		// "I love music of Kartik.",
-
-		// "I LOVE MUSIC.",
-		// "I love music.",
-		// "I LoVe MuSiC.",
-		// "",
-		// "I love MuSIC of Kartik.",
-		// "I love music of kartik.",
-		// "Thanks.",
-		// "I love music of kartik.",
-		// "I love MuSIC of Kartik.",
-
-		// "We love music.",
-		// "I love music.",
-		// "They love music.",
-		// "",
-		// "I love music of Kartik.",
-		// "We love music of Kartik.",
-		// "Thanks.",
-
 		"I love music.",
 		"A love music.",
 		"C love music.",
@@ -168,5 +140,4 @@ func main() {
 		fmt.Println(i)
 		// writer.Write([]byte(i))
 	}
-
 }

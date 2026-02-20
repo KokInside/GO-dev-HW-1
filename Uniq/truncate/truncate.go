@@ -5,17 +5,17 @@ import (
 	"unicode"
 )
 
-func TruncateStringFields(str string, fieldCount int) (string, error) {
+func TruncateFields(str *string, fieldCount int) error {
 
 	if fieldCount < 0 {
-		return "", errors.New("[num_fields] must be positive")
+		return errors.New("[num_fields] must be positive")
 	}
 
 	var prevSymbol bool
 
 	var wordCount int
 
-	for i, s := range str {
+	for i, s := range *str {
 
 		if unicode.IsSpace(s) {
 			if prevSymbol {
@@ -29,24 +29,27 @@ func TruncateStringFields(str string, fieldCount int) (string, error) {
 		}
 
 		if wordCount == fieldCount {
-			return str[i:], nil
+			*str = (*str)[i:]
+			return nil
 		}
 	}
 
-	//return "", errors.New("[num_fields] is more than string field count. Reduce [num_fields]")
-	return "", nil
+	*str = ""
+
+	return nil
 }
 
-func TruncateStringSymbols(str string, symbolCount int) (string, error) {
+func TruncateSymbols(str *string, symbolCount int) error {
 
 	if symbolCount < 0 {
-		return "", errors.New("[num_chars] must be positive")
+		return errors.New("[num_chars] must be positive")
 	}
 
-	if symbolCount > len(str) {
-		return "", nil
-		//return "", errors.New("[num_chars] is more than string symbols count. Reduce [num_chars]")
+	if symbolCount > len(*str) {
+		*str = ""
+		return nil
 	}
 
-	return str[symbolCount:], nil
+	*str = (*str)[symbolCount:]
+	return nil
 }
