@@ -1,13 +1,14 @@
 package validators
 
 import (
+	"calc/comparator"
 	"calc/types"
-	"calc/utils"
+
 	"errors"
 	"strconv"
 )
 
-func ValidateTokens(tokens *[]types.Token) error {
+func ValidateTokens(tokens []types.Token) error {
 
 	empryError := emptyExpression(tokens)
 
@@ -44,12 +45,20 @@ func ValidateTokens(tokens *[]types.Token) error {
 
 // Validators:
 
+func emptyExpression(tokens []types.Token) error {
+	if len(tokens) == 0 {
+		return errors.New("Empty expression")
+	}
+
+	return nil
+}
+
 // несбалансированные скобки
-func unbalancedParentheses(tokens *[]types.Token) error {
+func unbalancedParentheses(tokens []types.Token) error {
 
 	var open, close int
 
-	for _, token := range *tokens {
+	for _, token := range tokens {
 
 		switch token.Value {
 		case "(":
@@ -57,13 +66,11 @@ func unbalancedParentheses(tokens *[]types.Token) error {
 
 		case ")":
 			close++
-
 		}
 
 		if close > open {
 			return errors.New("Missing (")
 		}
-
 	}
 
 	if open == close {
@@ -74,11 +81,11 @@ func unbalancedParentheses(tokens *[]types.Token) error {
 }
 
 // несколько операторов подряд
-func notEnoughOperands(tokens *[]types.Token) error {
+func notEnoughOperands(tokens []types.Token) error {
 
 	var isPrevOperator bool
 
-	for _, token := range *tokens {
+	for _, token := range tokens {
 
 		if token.Type == types.Operator {
 
@@ -94,18 +101,18 @@ func notEnoughOperands(tokens *[]types.Token) error {
 	}
 
 	// первый и последний токены не должны быть операторами
-	if (*tokens)[0].Type == types.Operator || (*tokens)[len(*tokens)-1].Type == types.Operator {
+	if tokens[0].Type == types.Operator || tokens[len(tokens)-1].Type == types.Operator {
 		return errors.New("Not enough operands")
 	}
 
 	return nil
 }
 
-func notEnoughOperators(tokens *[]types.Token) error {
+func notEnoughOperators(tokens []types.Token) error {
 
 	var isPrevOperand bool
 
-	for _, token := range *tokens {
+	for _, token := range tokens {
 
 		if token.Type == types.Number {
 
@@ -124,11 +131,11 @@ func notEnoughOperators(tokens *[]types.Token) error {
 }
 
 // деление на ноль до этапа раскрытия скобок
-func divisionByZero(tokens *[]types.Token) error {
+func divisionByZero(tokens []types.Token) error {
 
 	var isPrevDivisor bool
 
-	for _, token := range *tokens {
+	for _, token := range tokens {
 
 		if isPrevDivisor == true && token.Type == types.Number {
 
@@ -138,7 +145,7 @@ func divisionByZero(tokens *[]types.Token) error {
 				return errors.New("Can't parse float")
 			}
 
-			if utils.Float64Compare(v, 0) {
+			if comparator.Float64Compare(v, 0) {
 
 				return errors.New("Division by zero")
 			}
@@ -151,12 +158,5 @@ func divisionByZero(tokens *[]types.Token) error {
 		}
 	}
 
-	return nil
-}
-
-func emptyExpression(tokens *[]types.Token) error {
-	if len(*tokens) == 0 {
-		return errors.New("Empty expression")
-	}
 	return nil
 }
