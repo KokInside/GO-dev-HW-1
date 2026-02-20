@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 	"uniq/options"
+	"uniq/strutils"
 	"uniq/truncate"
-	"uniq/utils"
 )
 
 func Uniq(input []string, options options.Options) ([]string, error) {
@@ -62,7 +62,7 @@ func Uniq(input []string, options options.Options) ([]string, error) {
 
 			if options.C {
 				var prefix string = "    " + strconv.Itoa(repeatCount) + " "
-				prevStringToReturn = utils.ConcatStrings(&prefix, &prevString)
+				prevStringToReturn = strutils.ConcatStrings(&prefix, &prevString)
 			}
 
 			if options.D {
@@ -106,9 +106,11 @@ func Uniq(input []string, options options.Options) ([]string, error) {
 		prevStringToReturn = line
 	}
 
+	// нужно обработать последнюю введённую строку в соответствии с флагами
+
 	if options.C {
 		var prefix string = "    " + strconv.Itoa(repeatCount) + " "
-		prevStringToReturn = utils.ConcatStrings(&prefix, &prevString)
+		prevStringToReturn = strutils.ConcatStrings(&prefix, &prevString)
 	}
 
 	if options.D {

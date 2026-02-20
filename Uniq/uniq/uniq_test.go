@@ -1,18 +1,84 @@
-package testcases
+package uniq
 
-import "uniq/options"
+import (
+	"slices"
+	"testing"
+	"uniq/options"
+)
 
-type TestCase struct {
-	Name     string
-	Input    []string
-	Expected []string
-	Options  options.Options
+type testCase struct {
+	name     string
+	input    []string
+	expected []string
+	options  options.Options
 }
 
-var TestsNoParemeters []TestCase = []TestCase{
+type errortestCase struct {
+	name          string
+	input         []string
+	options       options.Options
+	expectedError string
+}
+
+func TestUniq(t *testing.T) {
+
+	allTests := [][]testCase{
+		testsNoParemeters,
+		tests_c_Flag,
+		tests_d_Flag,
+		tests_u_Flag,
+		tests_i_Flag,
+		tests_f_Flag,
+		tests_s_Flag,
+	}
+
+	for _, tests := range allTests {
+
+		for i, test := range tests {
+
+			result, err := Uniq(test.input, test.options)
+
+			if err != nil {
+				t.Logf("Fatal error: %s. Test: %v, № %v", err.Error(), test.name, i)
+				t.FailNow()
+			}
+
+			if !slices.Equal(result, test.expected) {
+				t.Errorf("Error: test: %v, № %v.\nexpected: %v\nGet     : %v\n", test.name, i, test.expected, result)
+			}
+		}
+	}
+}
+
+func TestUniqError(t *testing.T) {
+	allErrorTests := [][]errortestCase{
+		testDU_FlagsError,
+		testNegativeF_FlagError,
+		testNegativeS_FlagError,
+	}
+
+	for _, tests := range allErrorTests {
+		for i, test := range tests {
+
+			_, err := Uniq(test.input, test.options)
+
+			if err == nil {
+				t.Errorf("expected error, got nil. Test: %s, № %v", test.name, i)
+			}
+
+			if err.Error() != test.expectedError {
+				t.Errorf("expected error: %s, got %s.\nTest: %s, № %v", test.expectedError, err.Error(), test.name, i)
+			}
+		}
+	}
+}
+
+// Test cases
+
+var testsNoParemeters []testCase = []testCase{
 	{
-		Name: "noParameters",
-		Input: []string{
+		name: "noParameters",
+		input: []string{
 			"Today we gathered moss for my uncle's wedding.",
 			"Today we gathered moss for my uncle's wedding.",
 			"Today we gathered moss for my uncle's wedding.",
@@ -26,7 +92,7 @@ var TestsNoParemeters []TestCase = []TestCase{
 			"hello",
 			"Today we gathered moss for my uncle's wedding.",
 		},
-		Expected: []string{
+		expected: []string{
 			"Today we gathered moss for my uncle's wedding.",
 			"hello",
 			"Today we gathered moss for my uncle's wedding.",
@@ -39,8 +105,8 @@ var TestsNoParemeters []TestCase = []TestCase{
 		},
 	},
 	{
-		Name: "noParameters",
-		Input: []string{
+		name: "noParameters",
+		input: []string{
 			"a",
 			"a",
 			"a ",
@@ -54,7 +120,7 @@ var TestsNoParemeters []TestCase = []TestCase{
 			" ",
 			"a",
 		},
-		Expected: []string{
+		expected: []string{
 			"a",
 			"a ",
 			"a    ",
@@ -67,10 +133,10 @@ var TestsNoParemeters []TestCase = []TestCase{
 	},
 }
 
-var Tests_c_Flag []TestCase = []TestCase{
+var tests_c_Flag []testCase = []testCase{
 	{
-		Name: "-c flag",
-		Input: []string{
+		name: "-c flag",
+		input: []string{
 			"",
 			" ",
 			"He learned the important lesson that a picnic at the beach on a windy day is a bad idea.",
@@ -96,7 +162,7 @@ var Tests_c_Flag []TestCase = []TestCase{
 			"hello",
 			"",
 		},
-		Expected: []string{
+		expected: []string{
 			"    1 ",
 			"    1  ",
 			"    2 He learned the important lesson that a picnic at the beach on a windy day is a bad idea.",
@@ -111,11 +177,11 @@ var Tests_c_Flag []TestCase = []TestCase{
 			"    1 hello",
 			"    1 ",
 		},
-		Options: options.Options{C: true},
+		options: options.Options{C: true},
 	},
 	{
-		Name: "-c flag",
-		Input: []string{
+		name: "-c flag",
+		input: []string{
 			"alpha beta gamma",
 			"alpha beta gamma",
 			"ALPHA beta gamma",
@@ -129,7 +195,7 @@ var Tests_c_Flag []TestCase = []TestCase{
 			"omega",
 			"omega",
 		},
-		Expected: []string{
+		expected: []string{
 			"    2 alpha beta gamma",
 			"    1 ALPHA beta gamma",
 			"    1 alpha  beta gamma",
@@ -139,11 +205,11 @@ var Tests_c_Flag []TestCase = []TestCase{
 			"    1 ",
 			"    2 omega",
 		},
-		Options: options.Options{C: true},
+		options: options.Options{C: true},
 	},
 	{
-		Name: "-c flag",
-		Input: []string{
+		name: "-c flag",
+		input: []string{
 			"line",
 			"line",
 			"line",
@@ -154,17 +220,17 @@ var Tests_c_Flag []TestCase = []TestCase{
 			"line",
 			"line",
 		},
-		Expected: []string{
+		expected: []string{
 			"    3 line",
 			"    2 line ",
 			"    2    ",
 			"    2 line",
 		},
-		Options: options.Options{C: true},
+		options: options.Options{C: true},
 	},
 	{
-		Name: "-c flag",
-		Input: []string{
+		name: "-c flag",
+		input: []string{
 			"       ",
 			"       ",
 			"	",
@@ -173,21 +239,21 @@ var Tests_c_Flag []TestCase = []TestCase{
 			"single",
 			"	 ",
 		},
-		Expected: []string{
+		expected: []string{
 			"    2        ",
 			"    1 	",
 			"    1  ",
 			"    2 single",
 			"    1 	 ",
 		},
-		Options: options.Options{C: true},
+		options: options.Options{C: true},
 	},
 }
 
-var Tests_d_Flag []TestCase = []TestCase{
+var tests_d_Flag []testCase = []testCase{
 	{
-		Name: "-d flag",
-		Input: []string{
+		name: "-d flag",
+		input: []string{
 			"",
 			" ",
 			"He learned the important lesson that a picnic at the beach on a windy day is a bad idea.",
@@ -213,17 +279,17 @@ var Tests_d_Flag []TestCase = []TestCase{
 			"hello",
 			"",
 		},
-		Expected: []string{
+		expected: []string{
 			"He learned the important lesson that a picnic at the beach on a windy day is a bad idea.",
 			"The book is in front of the table.",
 			"",
 			" ",
 		},
-		Options: options.Options{D: true},
+		options: options.Options{D: true},
 	},
 	{
-		Name: "-d flag",
-		Input: []string{
+		name: "-d flag",
+		input: []string{
 			"one",
 			"one",
 			"two",
@@ -234,15 +300,15 @@ var Tests_d_Flag []TestCase = []TestCase{
 			"One",
 			"one",
 		},
-		Expected: []string{
+		expected: []string{
 			"one",
 			"two",
 		},
-		Options: options.Options{D: true},
+		options: options.Options{D: true},
 	},
 	{
-		Name: "-d flag",
-		Input: []string{
+		name: "-d flag",
+		input: []string{
 			"x",
 			"x",
 			"y",
@@ -254,20 +320,20 @@ var Tests_d_Flag []TestCase = []TestCase{
 			"x",
 			"x",
 		},
-		Expected: []string{
+		expected: []string{
 			"x",
 			"z",
 			"y",
 			"x",
 		},
-		Options: options.Options{D: true},
+		options: options.Options{D: true},
 	},
 }
 
-var Tests_u_Flag []TestCase = []TestCase{
+var tests_u_Flag []testCase = []testCase{
 	{
-		Name: "-u flag",
-		Input: []string{
+		name: "-u flag",
+		input: []string{
 			"",
 			" ",
 			"He learned the important lesson that a picnic at the beach on a windy day is a bad idea.",
@@ -293,7 +359,7 @@ var Tests_u_Flag []TestCase = []TestCase{
 			"hello",
 			"",
 		},
-		Expected: []string{
+		expected: []string{
 			"",
 			" ",
 			"",
@@ -304,11 +370,11 @@ var Tests_u_Flag []TestCase = []TestCase{
 			"hello",
 			"",
 		},
-		Options: options.Options{U: true},
+		options: options.Options{U: true},
 	},
 	{
-		Name: "-u flag",
-		Input: []string{
+		name: "-u flag",
+		input: []string{
 			"first",
 			"second",
 			"second",
@@ -318,17 +384,17 @@ var Tests_u_Flag []TestCase = []TestCase{
 			"fifth",
 			"second",
 		},
-		Expected: []string{
+		expected: []string{
 			"first",
 			"third",
 			"fifth",
 			"second",
 		},
-		Options: options.Options{U: true},
+		options: options.Options{U: true},
 	},
 	{
-		Name: "-u flag",
-		Input: []string{
+		name: "-u flag",
+		input: []string{
 			"apple",
 			"banana",
 			"apple",
@@ -337,21 +403,21 @@ var Tests_u_Flag []TestCase = []TestCase{
 			"cherry",
 			"apple",
 		},
-		Expected: []string{
+		expected: []string{
 			"apple",
 			"banana",
 			"apple",
 			"banana",
 			"apple",
 		},
-		Options: options.Options{U: true},
+		options: options.Options{U: true},
 	},
 }
 
-var Tests_i_Flag []TestCase = []TestCase{
+var tests_i_Flag []testCase = []testCase{
 	{
-		Name: "-i flag",
-		Input: []string{
+		name: "-i flag",
+		input: []string{
 			"",
 			" ",
 			"he LeARneD The iMPORtANt LessON tHaT a Picnic At tHE BEaCh on a WINDY day iS A bAD IDEa.",
@@ -379,7 +445,7 @@ var Tests_i_Flag []TestCase = []TestCase{
 			"hELlo",
 			"",
 		},
-		Expected: []string{
+		expected: []string{
 			"",
 			" ",
 			"he LeARneD The iMPORtANt LessON tHaT a Picnic At tHE BEaCh on a WINDY day iS A bAD IDEa.",
@@ -400,14 +466,14 @@ var Tests_i_Flag []TestCase = []TestCase{
 			"hELlo",
 			"",
 		},
-		Options: options.Options{I: true},
+		options: options.Options{I: true},
 	},
 }
 
-var Tests_f_Flag []TestCase = []TestCase{
+var tests_f_Flag []testCase = []testCase{
 	{
-		Name: "-f flag",
-		Input: []string{
+		name: "-f flag",
+		input: []string{
 			"12.03.25 Today we gathered moss for my uncle's wedding.",
 			"13.03.25 Today we gathered moss for my uncle's wedding.",
 			"14.03.25 Today we gathered moss for my uncle's wedding.",
@@ -421,7 +487,7 @@ var Tests_f_Flag []TestCase = []TestCase{
 			"22.03.25 hello",
 			"23.03.25 Today we gathered moss for my uncle's wedding.",
 		},
-		Expected: []string{
+		expected: []string{
 			"12.03.25 Today we gathered moss for my uncle's wedding.",
 			"15.03.25 hello",
 			"16.03.25 Today we gathered moss for my uncle's wedding.",
@@ -432,11 +498,11 @@ var Tests_f_Flag []TestCase = []TestCase{
 			"22.03.25 hello",
 			"23.03.25 Today we gathered moss for my uncle's wedding.",
 		},
-		Options: options.Options{F: 1},
+		options: options.Options{F: 1},
 	},
 	{
-		Name: "-f flag",
-		Input: []string{
+		name: "-f flag",
+		input: []string{
 			"2026-02-17 INFO started process A",
 			"2026-02-17 INFO started process A",
 			"2026-02-17 DEBUG started process A",
@@ -444,35 +510,35 @@ var Tests_f_Flag []TestCase = []TestCase{
 			"2026-02-18 INFO started process A",
 			"INFO started process A",
 		},
-		Expected: []string{
+		expected: []string{
 			"2026-02-17 INFO started process A",
 			"2026-02-17 DEBUG started process A",
 			"2026-02-17 INFO started process B",
 			"2026-02-18 INFO started process A",
 			"INFO started process A",
 		},
-		Options: options.Options{F: 1},
+		options: options.Options{F: 1},
 	},
 	{
-		Name: "-f flag",
-		Input: []string{
+		name: "-f flag",
+		input: []string{
 			"A BB C",
 			"UO BBB C",
 			"XYZ 11Y Z",
 			"OOO 9 Z",
 		},
-		Expected: []string{
+		expected: []string{
 			"A BB C",
 			"XYZ 11Y Z",
 		},
-		Options: options.Options{F: 2},
+		options: options.Options{F: 2},
 	},
 }
 
-var Tests_s_Flag []TestCase = []TestCase{
+var tests_s_Flag []testCase = []testCase{
 	{
-		Name: "-s flag",
-		Input: []string{
+		name: "-s flag",
+		input: []string{
 			"ABCfoobar",
 			"ABDfoobar",
 			"ABEfoobar",
@@ -480,9 +546,88 @@ var Tests_s_Flag []TestCase = []TestCase{
 			"XYZfoobar",
 			"XYafoobar",
 		},
-		Expected: []string{
+		expected: []string{
 			"ABCfoobar",
 		},
-		Options: options.Options{S: 3},
+		options: options.Options{S: 3},
+	},
+}
+
+// Error cases
+
+var testDU_FlagsError []errortestCase = []errortestCase{
+	{
+		name: "-d and -u flags used simultaneously",
+		input: []string{
+			"Some input",
+			"Some output",
+		},
+		options:       options.Options{D: true, U: true},
+		expectedError: "Flags -d and -u can't be used simultaneously.",
+	},
+	{
+		name: "-d and -u flags used simultaneously",
+		input: []string{
+			"Some input",
+			"Some output",
+		},
+		options:       options.Options{D: true, U: true, I: true},
+		expectedError: "Flags -d and -u can't be used simultaneously.",
+	},
+	{
+		name: "-d and -u flags used simultaneously",
+		input: []string{
+			"Some input",
+			"Some output",
+		},
+
+		options:       options.Options{D: true, U: true, I: true, C: true},
+		expectedError: "Flags -d and -u can't be used simultaneously.",
+	},
+}
+
+var testNegativeF_FlagError []errortestCase = []errortestCase{
+	{
+		name: "Negative -f flag",
+		input: []string{
+			"Some text",
+			"some text",
+			"one more text",
+		},
+		options:       options.Options{F: -11},
+		expectedError: "[num_fields] must be positive",
+	},
+	{
+		name: "Negative -f flag",
+		input: []string{
+			"Some text",
+			"some text",
+			"one more text",
+		},
+		options:       options.Options{F: -1, C: true, U: true, I: true},
+		expectedError: "[num_fields] must be positive",
+	},
+}
+
+var testNegativeS_FlagError []errortestCase = []errortestCase{
+	{
+		name: "Negative -s flag",
+		input: []string{
+			"Some text",
+			"some text",
+			"one more text",
+		},
+		options:       options.Options{S: -11},
+		expectedError: "[num_chars] must be positive",
+	},
+	{
+		name: "Negative -f flag",
+		input: []string{
+			"Some text",
+			"some text",
+			"one more text",
+		},
+		options:       options.Options{S: -1, C: true, D: true},
+		expectedError: "[num_chars] must be positive",
 	},
 }
