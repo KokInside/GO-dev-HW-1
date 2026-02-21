@@ -24,6 +24,11 @@ func ParseTokens(str *string) ([]types.Token, error) {
 
 			if i == len(*str)-1 {
 
+				// неявное умножение, если после ')' идёт число
+				if len(tokens) != 0 && tokens[len(tokens)-1].Value == ")" {
+					tokens = append(tokens, types.Token{Type: types.BinaryOp, Value: "*"})
+				}
+
 				tokens = append(tokens, types.Token{Type: types.Number, Value: currentNumber.String()})
 			}
 
@@ -49,6 +54,12 @@ func ParseTokens(str *string) ([]types.Token, error) {
 		}
 
 		if currentNumber.Len() != 0 {
+
+			// неявное умножение, если после ')' идёт число
+			if len(tokens) != 0 && tokens[len(tokens)-1].Value == ")" {
+				tokens = append(tokens, types.Token{Type: types.BinaryOp, Value: "*"})
+			}
+
 			tokens = append(tokens, types.Token{Type: types.Number, Value: currentNumber.String()})
 
 			hasDot = false
@@ -61,11 +72,37 @@ func ParseTokens(str *string) ([]types.Token, error) {
 
 		switch symbol {
 
-		case '*', '/', '+', '-':
+		case '+', '-':
 
-			tokens = append(tokens, types.Token{Type: types.Operator, Value: string(symbol)})
+			var curToken types.Token = types.Token{Value: string(symbol)}
+
+			if len(tokens) == 0 ||
+				tokens[len(tokens)-1].Type == types.UnaryOp ||
+				tokens[len(tokens)-1].Type == types.BinaryOp ||
+				tokens[len(tokens)-1].Value == "(" {
+
+				curToken.Type = types.UnaryOp
+			} else {
+
+				curToken.Type = types.BinaryOp
+			}
+
+			tokens = append(tokens, curToken)
+
+		case '*', '/':
+
+			tokens = append(tokens, types.Token{Type: types.BinaryOp, Value: string(symbol)})
 
 		case '(', ')':
+
+			// неявное умножение, если после числа или ')' стоит '('
+			if symbol == '(' && len(tokens) != 0 {
+				if tokens[len(tokens)-1].Type == types.Number ||
+					tokens[len(tokens)-1].Value == ")" {
+
+					tokens = append(tokens, types.Token{Type: types.BinaryOp, Value: "*"})
+				}
+			}
 
 			tokens = append(tokens, types.Token{Type: types.Parenthesis, Value: string(symbol)})
 
@@ -77,13 +114,22 @@ func ParseTokens(str *string) ([]types.Token, error) {
 	return tokens, nil
 }
 
-func Priority(token string) int {
-	switch token {
-	case "*", "/":
-		return 2
+func Priority(token types.Token) int {
 
-	case "+", "-":
-		return 1
+	if token.Type == types.UnaryOp {
+		return 3
+	}
+
+	if token.Type == types.BinaryOp {
+
+		switch token.Value {
+
+		case "*", "/":
+			return 2
+
+		case "+", "-":
+			return 1
+		}
 	}
 
 	return 0

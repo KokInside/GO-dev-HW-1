@@ -4,7 +4,8 @@ type TokenType int
 
 const (
 	Number TokenType = iota
-	Operator
+	UnaryOp
+	BinaryOp
 	Parenthesis
 )
 

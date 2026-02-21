@@ -3,12 +3,12 @@ package calc
 import (
 	"calc/calc/calculations"
 	"calc/tokenizer"
+	"calc/types"
 	"calc/validators"
 )
 
 func Calculate(str string) (float64, error) {
 
-	// спарсить токены из переданной строки
 	tokens, parseError := tokenizer.ParseTokens(&str)
 
 	if parseError != nil {
@@ -22,7 +22,7 @@ func Calculate(str string) (float64, error) {
 	}
 
 	// инфиксная нотация -> Польская нотация
-	var outQueue []string = calculations.InfixToPolish(tokens)
+	var outQueue []types.Token = calculations.InfixToPolish(tokens)
 
 	// получить результат из польской нотации
 	result, calculationError := calculations.SolveRPN(outQueue)

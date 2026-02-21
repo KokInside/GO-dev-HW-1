@@ -53,7 +53,6 @@ func emptyExpression(tokens []types.Token) error {
 	return nil
 }
 
-// несбалансированные скобки
 func unbalancedParentheses(tokens []types.Token) error {
 
 	var open, close int
@@ -80,28 +79,30 @@ func unbalancedParentheses(tokens []types.Token) error {
 	}
 }
 
-// несколько операторов подряд
 func notEnoughOperands(tokens []types.Token) error {
 
-	var isPrevOperator bool
+	var isPrevBinaryOp bool
 
 	for _, token := range tokens {
 
-		if token.Type == types.Operator {
+		if token.Type == types.BinaryOp {
 
-			if isPrevOperator == true {
+			if isPrevBinaryOp == true {
 				return errors.New("Not enough operands")
 			}
 
-			isPrevOperator = true
+			isPrevBinaryOp = true
 
 		} else {
-			isPrevOperator = false
+			isPrevBinaryOp = false
 		}
 	}
 
-	// первый и последний токены не должны быть операторами
-	if tokens[0].Type == types.Operator || tokens[len(tokens)-1].Type == types.Operator {
+	// Первый токен не может быть бинарным оператором
+	// Последний токен не может быть любым оператором
+	if tokens[0].Type == types.BinaryOp ||
+		tokens[len(tokens)-1].Type == types.BinaryOp ||
+		tokens[len(tokens)-1].Type == types.UnaryOp {
 		return errors.New("Not enough operands")
 	}
 
