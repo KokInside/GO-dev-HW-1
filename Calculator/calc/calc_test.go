@@ -1,8 +1,9 @@
 package calc
 
 import (
-	"calc/comparator"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type testcase struct {
@@ -32,6 +33,8 @@ func TestCalc(t *testing.T) {
 		testSpaces,
 	}
 
+	assert := assert.New(t)
+
 	// Not error test cases
 	for _, tests := range noexceptTests {
 
@@ -44,24 +47,16 @@ func TestCalc(t *testing.T) {
 				t.FailNow()
 			}
 
-			if !comparator.Float64Compare(result, test.expected) {
-				t.Errorf("Error. Test: %s, %v.\nExpected: %v\nGot:      %v\n", test.name, i, test.expected, result)
-			}
+			assert.InDeltaf(test.expected, result, 1.0e-9, "Error. Test: %s, %v.\nExpected: %v\nGot:      %v\n", test.name, i, test.expected, result)
 		}
 	}
 
 	// Error test cases
 	for i, test := range errortests {
 
-		_, error := Calculate(test.input)
+		_, err := Calculate(test.input)
 
-		if error == nil {
-			t.Errorf("Expected error: \"%s\", got: nil. Test: %s, № %v", test.expectedError, test.name, i)
-		}
-
-		if error.Error() != test.expectedError {
-			t.Error("Unexpected error:", error)
-		}
+		assert.EqualErrorf(err, test.expectedError, "Expected error: \"%s\", got: nil. Test: %s, № %v", test.expectedError, test.name, i)
 	}
 }
 

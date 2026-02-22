@@ -8,7 +8,7 @@ import (
 	"unicode"
 )
 
-func ParseTokens(str *string) ([]types.Token, error) {
+func ParseTokens(str string) ([]types.Token, error) {
 
 	var tokens []types.Token
 
@@ -16,13 +16,13 @@ func ParseTokens(str *string) ([]types.Token, error) {
 
 	var hasDot bool
 
-	for i, symbol := range *str {
+	for i, symbol := range str {
 
 		if unicode.IsDigit(symbol) {
 
 			currentNumber.WriteRune(symbol)
 
-			if i == len(*str)-1 {
+			if i == len(str)-1 {
 
 				// неявное умножение, если после ')' идёт число
 				if len(tokens) != 0 && tokens[len(tokens)-1].Value == ")" {
@@ -38,12 +38,12 @@ func ParseTokens(str *string) ([]types.Token, error) {
 		if symbol == '.' {
 			currentNumber.WriteRune(symbol)
 
-			if hasDot == true {
+			if hasDot {
 
 				return nil, errors.New("Second dot in number")
 			}
 
-			if i == len(*str)-1 {
+			if i == len(str)-1 {
 
 				tokens = append(tokens, types.Token{Type: types.Number, Value: currentNumber.String()})
 			}

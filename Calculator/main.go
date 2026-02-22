@@ -22,12 +22,12 @@ func main() {
 	}
 
 	// parsed string
-	var str string = args[1]
+	var expression string = args[1]
 
-	result, calculationError := calc.Calculate(str)
+	result, err := calc.Calculate(expression)
 
-	if calculationError != nil {
-		fmt.Println("Error:", calculationError.Error())
+	if err != nil {
+		fmt.Println("Error:", err.Error())
 		return
 	}
 

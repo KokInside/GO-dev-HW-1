@@ -1,5 +1,7 @@
 package stack
 
+import "errors"
+
 type Stack[T any] struct {
 	stack []T
 }
@@ -16,11 +18,14 @@ func (s *Stack[T]) Pop() {
 	panic("pop empty stack")
 }
 
-func (s *Stack[T]) Top() T {
+func (s *Stack[T]) Top() (T, error) {
 	if len(s.stack) != 0 {
-		return s.stack[len(s.stack)-1]
+		return s.stack[len(s.stack)-1], nil
 	}
-	panic("Top empty stack")
+
+	var zero T
+
+	return zero, errors.New("Top empty stack")
 }
 
 func (s *Stack[T]) Size() int {

@@ -25,9 +25,9 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 
 		if token.Type == types.BinaryOp {
 
-			for operatorStack.Size() != 0 && tokenizer.Priority(operatorStack.Top()) >= tokenizer.Priority(token) {
+			for top, _ := operatorStack.Top(); operatorStack.Size() != 0 && tokenizer.Priority(top) >= tokenizer.Priority(token); top, _ = operatorStack.Top() {
 
-				outQueue = append(outQueue, operatorStack.Top())
+				outQueue = append(outQueue, top)
 				operatorStack.Pop()
 			}
 
@@ -37,12 +37,6 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 		}
 
 		if token.Type == types.UnaryOp {
-
-			for operatorStack.Size() != 0 && tokenizer.Priority(operatorStack.Top()) > tokenizer.Priority(token) {
-
-				outQueue = append(outQueue, operatorStack.Top())
-				operatorStack.Pop()
-			}
 
 			operatorStack.Push(token)
 
@@ -55,9 +49,9 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 				operatorStack.Push(token)
 			} else {
 
-				for operatorStack.Top().Value != "(" {
+				for top, _ := operatorStack.Top(); top.Value != "("; top, _ = operatorStack.Top() {
 
-					outQueue = append(outQueue, operatorStack.Top())
+					outQueue = append(outQueue, top)
 					operatorStack.Pop()
 				}
 
@@ -70,7 +64,9 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 
 	for operatorStack.Size() != 0 {
 
-		outQueue = append(outQueue, operatorStack.Top())
+		top, _ := operatorStack.Top()
+
+		outQueue = append(outQueue, top)
 		operatorStack.Pop()
 	}
 

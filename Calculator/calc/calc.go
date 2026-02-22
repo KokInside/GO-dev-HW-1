@@ -7,18 +7,16 @@ import (
 	"calc/validators"
 )
 
-func Calculate(str string) (float64, error) {
+func Calculate(expression string) (float64, error) {
 
-	tokens, parseError := tokenizer.ParseTokens(&str)
+	tokens, parseError := tokenizer.ParseTokens(expression)
 
 	if parseError != nil {
 		return 0, parseError
 	}
 
-	validationError := validators.ValidateTokens(tokens)
-
-	if validationError != nil {
-		return 0, validationError
+	if err := validators.ValidateTokens(tokens); err != nil {
+		return 0, err
 	}
 
 	// инфиксная нотация -> Польская нотация

@@ -21,14 +21,23 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 		switch token.Type {
 
 		case types.BinaryOp:
-			if polishStack.Size() < 2 {
+
+			top, err := polishStack.Top()
+
+			if err != nil {
 				return 0, errors.New("Not enough operands")
 			}
 
-			rightOperand := polishStack.Top()
+			rightOperand := top
 			polishStack.Pop()
 
-			leftOperand := polishStack.Top()
+			top, err = polishStack.Top()
+
+			if err != nil {
+				return 0, errors.New("Not enough operands")
+			}
+
+			leftOperand := top
 			polishStack.Pop()
 
 			switch token.Value {
@@ -58,11 +67,14 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 			}
 
 		case types.UnaryOp:
-			if polishStack.Size() < 1 {
+
+			top, err := polishStack.Top()
+
+			if err != nil {
 				return 0, errors.New("Not enough operands")
 			}
 
-			operand := polishStack.Top()
+			operand := top
 			polishStack.Pop()
 
 			switch token.Value {
@@ -88,5 +100,11 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 		}
 	}
 
-	return polishStack.Top(), nil
+	top, err := polishStack.Top()
+
+	if err != nil {
+		return top, err
+	}
+
+	return top, nil
 }

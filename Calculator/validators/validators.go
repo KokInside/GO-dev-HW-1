@@ -10,34 +10,24 @@ import (
 
 func ValidateTokens(tokens []types.Token) error {
 
-	empryError := emptyExpression(tokens)
-
-	if empryError != nil {
-		return empryError
+	if err := emptyExpression(tokens); err != nil {
+		return err
 	}
 
-	parenthesesError := unbalancedParentheses(tokens)
-
-	if parenthesesError != nil {
-		return parenthesesError
+	if err := unbalancedParentheses(tokens); err != nil {
+		return err
 	}
 
-	operandsError := notEnoughOperands(tokens)
-
-	if operandsError != nil {
-		return operandsError
+	if err := notEnoughOperands(tokens); err != nil {
+		return err
 	}
 
-	operatorsError := notEnoughOperators(tokens)
-
-	if operatorsError != nil {
-		return operatorsError
+	if err := notEnoughOperators(tokens); err != nil {
+		return err
 	}
 
-	divisionByZeroError := divisionByZero(tokens)
-
-	if divisionByZeroError != nil {
-		return divisionByZeroError
+	if err := divisionByZero(tokens); err != nil {
+		return err
 	}
 
 	return nil
@@ -87,7 +77,7 @@ func notEnoughOperands(tokens []types.Token) error {
 
 		if token.Type == types.BinaryOp {
 
-			if isPrevBinaryOp == true {
+			if isPrevBinaryOp {
 				return errors.New("Not enough operands")
 			}
 
@@ -117,7 +107,7 @@ func notEnoughOperators(tokens []types.Token) error {
 
 		if token.Type == types.Number {
 
-			if isPrevOperand == true {
+			if isPrevOperand {
 				return errors.New("Not enough operators")
 			}
 
@@ -138,7 +128,7 @@ func divisionByZero(tokens []types.Token) error {
 
 	for _, token := range tokens {
 
-		if isPrevDivisor == true && token.Type == types.Number {
+		if isPrevDivisor && token.Type == types.Number {
 
 			v, err := strconv.ParseFloat(token.Value, 64)
 
