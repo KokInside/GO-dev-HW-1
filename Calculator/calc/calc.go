@@ -3,16 +3,15 @@ package calc
 import (
 	"calc/calc/calculations"
 	"calc/tokenizer"
-	"calc/types"
 	"calc/validators"
 )
 
 func Calculate(expression string) (float64, error) {
 
-	tokens, parseError := tokenizer.ParseTokens(expression)
+	tokens, err := tokenizer.ParseTokens(expression)
 
-	if parseError != nil {
-		return 0, parseError
+	if err != nil {
+		return 0, err
 	}
 
 	if err := validators.ValidateTokens(tokens); err != nil {
@@ -20,13 +19,13 @@ func Calculate(expression string) (float64, error) {
 	}
 
 	// инфиксная нотация -> Польская нотация
-	var outQueue []types.Token = calculations.InfixToPolish(tokens)
+	outQueue := calculations.InfixToPolish(tokens)
 
 	// получить результат из польской нотации
-	result, calculationError := calculations.SolveRPN(outQueue)
+	result, err := calculations.SolveRPN(outQueue)
 
-	if calculationError != nil {
-		return 0, calculationError
+	if err != nil {
+		return 0, err
 	}
 
 	return result, nil

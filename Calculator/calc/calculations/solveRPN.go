@@ -43,7 +43,7 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 			switch token.Value {
 			case "*":
 
-				var result float64 = leftOperand * rightOperand
+				result := leftOperand * rightOperand
 				polishStack.Push(result)
 
 			case "/":
@@ -52,17 +52,17 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 					return 0, errors.New("Division by zero")
 				}
 
-				var result float64 = leftOperand / rightOperand
+				result := leftOperand / rightOperand
 				polishStack.Push(result)
 
 			case "-":
 
-				var result float64 = leftOperand - rightOperand
+				result := leftOperand - rightOperand
 				polishStack.Push(result)
 
 			case "+":
 
-				var result float64 = leftOperand + rightOperand
+				result := leftOperand + rightOperand
 				polishStack.Push(result)
 			}
 
@@ -79,11 +79,11 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 
 			switch token.Value {
 			case "+":
-				var result float64 = operand
+				result := operand
 				polishStack.Push(result)
 
 			case "-":
-				var result float64 = -operand
+				result := -operand
 
 				polishStack.Push(result)
 			}

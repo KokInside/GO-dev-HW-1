@@ -13,7 +13,7 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 
 	var operatorStack stack.Stack[types.Token]
 
-	var outQueue []types.Token
+	outQueue := make([]types.Token, 0)
 
 	for _, token := range tokens {
 

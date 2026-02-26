@@ -22,7 +22,7 @@ func main() {
 	}
 
 	// parsed string
-	var expression string = args[1]
+	expression := args[1]
 
 	result, err := calc.Calculate(expression)
 

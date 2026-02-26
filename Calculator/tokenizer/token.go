@@ -10,7 +10,7 @@ import (
 
 func ParseTokens(str string) ([]types.Token, error) {
 
-	var tokens []types.Token
+	tokens := make([]types.Token, 0)
 
 	var currentNumber strings.Builder
 
@@ -74,7 +74,7 @@ func ParseTokens(str string) ([]types.Token, error) {
 
 		case '+', '-':
 
-			var curToken types.Token = types.Token{Value: string(symbol)}
+			curToken := types.Token{Value: string(symbol)}
 
 			if len(tokens) == 0 ||
 				tokens[len(tokens)-1].Type == types.UnaryOp ||
