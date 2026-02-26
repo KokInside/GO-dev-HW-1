@@ -40,7 +40,7 @@ func ParseTokens(str string) ([]types.Token, error) {
 
 			if hasDot {
 
-				return nil, errors.New("Second dot in number")
+				return nil, errors.New("second dot in number")
 			}
 
 			if i == len(str)-1 {
@@ -107,7 +107,7 @@ func ParseTokens(str string) ([]types.Token, error) {
 			tokens = append(tokens, types.Token{Type: types.Parenthesis, Value: string(symbol)})
 
 		default:
-			return nil, errors.New("Unknown symbol")
+			return nil, errors.New("unknown symbol")
 		}
 	}
 

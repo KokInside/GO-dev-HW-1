@@ -37,7 +37,7 @@ func ValidateTokens(tokens []types.Token) error {
 
 func emptyExpression(tokens []types.Token) error {
 	if len(tokens) == 0 {
-		return errors.New("Empty expression")
+		return errors.New("empty expression")
 	}
 
 	return nil
@@ -58,14 +58,14 @@ func unbalancedParentheses(tokens []types.Token) error {
 		}
 
 		if close > open {
-			return errors.New("Missing (")
+			return errors.New("missing (")
 		}
 	}
 
 	if open == close {
 		return nil
 	} else {
-		return errors.New("Missing )")
+		return errors.New("missing )")
 	}
 }
 
@@ -78,7 +78,7 @@ func notEnoughOperands(tokens []types.Token) error {
 		if token.Type == types.BinaryOp {
 
 			if isPrevBinaryOp {
-				return errors.New("Not enough operands")
+				return errors.New("not enough operands")
 			}
 
 			isPrevBinaryOp = true
@@ -93,7 +93,7 @@ func notEnoughOperands(tokens []types.Token) error {
 	if tokens[0].Type == types.BinaryOp ||
 		tokens[len(tokens)-1].Type == types.BinaryOp ||
 		tokens[len(tokens)-1].Type == types.UnaryOp {
-		return errors.New("Not enough operands")
+		return errors.New("not enough operands")
 	}
 
 	return nil
@@ -108,7 +108,7 @@ func notEnoughOperators(tokens []types.Token) error {
 		if token.Type == types.Number {
 
 			if isPrevOperand {
-				return errors.New("Not enough operators")
+				return errors.New("not enough operators")
 			}
 
 			isPrevOperand = true
@@ -133,12 +133,12 @@ func divisionByZero(tokens []types.Token) error {
 			v, err := strconv.ParseFloat(token.Value, 64)
 
 			if err != nil {
-				return errors.New("Can't parse float")
+				return errors.New("can't parse float")
 			}
 
 			if comparator.Float64Compare(v, 0) {
 
-				return errors.New("Division by zero")
+				return errors.New("division by zero")
 			}
 		}
 

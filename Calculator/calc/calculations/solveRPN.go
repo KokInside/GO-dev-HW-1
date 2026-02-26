@@ -25,7 +25,7 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 			top, err := polishStack.Top()
 
 			if err != nil {
-				return 0, errors.New("Not enough operands")
+				return 0, errors.New("not enough operands")
 			}
 
 			rightOperand := top
@@ -34,7 +34,7 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 			top, err = polishStack.Top()
 
 			if err != nil {
-				return 0, errors.New("Not enough operands")
+				return 0, errors.New("not enough operands")
 			}
 
 			leftOperand := top
@@ -49,7 +49,7 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 			case "/":
 
 				if comparator.Float64Compare(rightOperand, 0.0) {
-					return 0, errors.New("Division by zero")
+					return 0, errors.New("division by zero")
 				}
 
 				result := leftOperand / rightOperand
@@ -71,7 +71,7 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 			top, err := polishStack.Top()
 
 			if err != nil {
-				return 0, errors.New("Not enough operands")
+				return 0, errors.New("not enough operands")
 			}
 
 			operand := top
@@ -93,7 +93,7 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 			res, parseErr := strconv.ParseFloat(token.Value, 64)
 
 			if parseErr != nil {
-				return 0, errors.New("Can't parse float")
+				return 0, errors.New("can't parse float")
 			}
 
 			polishStack.Push(res)
