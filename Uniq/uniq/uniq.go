@@ -12,7 +12,7 @@ func Uniq(input []string, options options.Options) ([]string, error) {
 	result := make([]string, 0)
 
 	if utils.BoolCount(options.Count, options.Repeated, options.Unique) > 1 {
-		return nil, errors.New("Only one flag of -c, -d and -u can be used.")
+		return nil, errors.New("only one flag of -c, -d and -u can be used")
 	}
 
 	// первая ли это строка ввода

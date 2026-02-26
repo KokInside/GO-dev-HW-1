@@ -559,7 +559,7 @@ var testCountRepeatedUniqueFlagsError []errortestCase = []errortestCase{
 			"Some output",
 		},
 		options:       options.Options{Repeated: true, Unique: true},
-		expectedError: "Only one flag of -c, -d and -u can be used.",
+		expectedError: "only one flag of -c, -d and -u can be used",
 	},
 	{
 		name: "Unique -c, -d, -u",
@@ -568,7 +568,7 @@ var testCountRepeatedUniqueFlagsError []errortestCase = []errortestCase{
 			"Some output",
 		},
 		options:       options.Options{Count: true, Repeated: true, Unique: true, IgnoreCase: true},
-		expectedError: "Only one flag of -c, -d and -u can be used.",
+		expectedError: "only one flag of -c, -d and -u can be used",
 	},
 	{
 		name: "Unique -c, -d, -u",
@@ -578,7 +578,7 @@ var testCountRepeatedUniqueFlagsError []errortestCase = []errortestCase{
 		},
 
 		options:       options.Options{Repeated: true, Unique: true, IgnoreCase: true, Count: true},
-		expectedError: "Only one flag of -c, -d and -u can be used.",
+		expectedError: "only one flag of -c, -d and -u can be used",
 	},
 }
 
