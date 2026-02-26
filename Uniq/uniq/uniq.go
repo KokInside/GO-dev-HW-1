@@ -8,7 +8,6 @@ import (
 )
 
 func Uniq(input []string, options options.Options) ([]string, error) {
-
 	result := make([]string, 0)
 
 	if utils.BoolCount(options.Count, options.Repeated, options.Unique) > 1 {
@@ -29,7 +28,6 @@ func Uniq(input []string, options options.Options) ([]string, error) {
 	var prevStringToReturn string
 
 	for _, line := range input {
-
 		curString := line
 
 		// учитывать регистр ?
@@ -37,21 +35,18 @@ func Uniq(input []string, options options.Options) ([]string, error) {
 
 		// флаг -f
 		curString, err := flagchecker.CheckSkipFields(curString, options)
-
 		if err != nil {
 			return nil, err
 		}
 
 		// флаг -s
 		curString, err = flagchecker.CheckSkipChars(curString, options)
-
 		if err != nil {
 			return nil, err
 		}
 
 		// Если встретили новую строку
 		if prevString != curString || isFirstString {
-
 			newLine, updated := flagchecker.CheckUniqueFlags(line, prevStringToReturn, prevString, options, isStringRepeat, isFirstString, repeatCount)
 
 			if updated {
@@ -64,7 +59,6 @@ func Uniq(input []string, options options.Options) ([]string, error) {
 
 			// если встретили старую строку
 		} else {
-
 			repeatCount++
 			isStringRepeat = true
 		}

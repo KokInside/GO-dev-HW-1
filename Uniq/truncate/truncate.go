@@ -6,20 +6,16 @@ import (
 )
 
 func TruncateFields(str string, fieldCount int) (string, error) {
-
 	if fieldCount < 0 {
 		return "", errors.New("[num_fields] must be positive")
 	}
 
 	var prevSymbol bool
-
 	var wordCount int
 
 	for i, s := range str {
-
 		if unicode.IsSpace(s) {
 			if prevSymbol {
-
 				wordCount++
 				prevSymbol = false
 			}

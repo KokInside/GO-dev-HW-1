@@ -36,13 +36,10 @@ func TestUniq(t *testing.T) {
 	assert := assert.New(t)
 
 	for _, tests := range allTests {
-
 		for i, test := range tests {
-
 			result, err := Uniq(test.input, test.options)
 
 			if assert.NoErrorf(err, "Fatal error. Test: %v, № %v", test.name, i) {
-
 				assert.Equalf(test.expected, result, "Error: test: %v, № %v.\nExpected: %v\nGot     : %v\n", test.name, i, test.expected, result)
 			}
 		}
@@ -59,9 +56,7 @@ func TestUniqError(t *testing.T) {
 	assert := assert.New(t)
 
 	for _, tests := range allErrorTests {
-
 		for i, test := range tests {
-
 			_, err := Uniq(test.input, test.options)
 
 			assert.EqualErrorf(err, test.expectedError, "Expected error: \"%s\", got \"%s\".\nTest: %s, № %v", test.expectedError, err.Error(), test.name, i)

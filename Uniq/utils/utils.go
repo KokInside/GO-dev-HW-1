@@ -7,7 +7,6 @@ import (
 )
 
 func ReadLines(reader io.Reader) ([]string, error) {
-
 	scanner := bufio.NewScanner(reader)
 
 	lines := make([]string, 0)
@@ -34,7 +33,6 @@ func ConcatStrings(str1, str2 *string) string {
 }
 
 func BoolCount(bools ...bool) int {
-
 	var counter int
 
 	for _, b := range bools {
