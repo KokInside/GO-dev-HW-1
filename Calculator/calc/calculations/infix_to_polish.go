@@ -10,65 +10,60 @@ import (
 
 // Infix notation -> Polish notation
 func InfixToPolish(tokens []types.Token) []types.Token {
-
 	var operatorStack stack.Stack[types.Token]
 
 	outQueue := make([]types.Token, 0)
 
 	for _, token := range tokens {
-
 		if token.Type == types.Number {
-
 			outQueue = append(outQueue, token)
 			continue
 		}
 
 		if token.Type == types.BinaryOp {
-
-			for top, _ := operatorStack.Top(); operatorStack.Size() != 0 && tokenizer.Priority(top) >= tokenizer.Priority(token); top, _ = operatorStack.Top() {
+			for top, err := operatorStack.Top(); operatorStack.Size() != 0 && tokenizer.Priority(top) >= tokenizer.Priority(token); top, err = operatorStack.Top() {
+				if err != nil {
+					return nil
+				}
 
 				outQueue = append(outQueue, top)
 				operatorStack.Pop()
 			}
-
 			operatorStack.Push(token)
-
 			continue
 		}
 
 		if token.Type == types.UnaryOp {
-
 			operatorStack.Push(token)
-
 			continue
 		}
 
 		if token.Type == types.Parenthesis {
-
 			if token.Value == "(" {
 				operatorStack.Push(token)
 			} else {
-
-				for top, _ := operatorStack.Top(); top.Value != "("; top, _ = operatorStack.Top() {
+				for top, err := operatorStack.Top(); top.Value != "("; top, err = operatorStack.Top() {
+					if err != nil {
+						return nil
+					}
 
 					outQueue = append(outQueue, top)
 					operatorStack.Pop()
 				}
-
 				operatorStack.Pop()
 			}
-
 			continue
 		}
 	}
 
 	for operatorStack.Size() != 0 {
-
-		top, _ := operatorStack.Top()
+		top, err := operatorStack.Top()
+		if err != nil {
+			return nil
+		}
 
 		outQueue = append(outQueue, top)
 		operatorStack.Pop()
 	}
-
 	return outQueue
 }

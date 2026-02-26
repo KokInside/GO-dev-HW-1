@@ -9,7 +9,6 @@ import (
 )
 
 func ValidateTokens(tokens []types.Token) error {
-
 	if err := emptyExpression(tokens); err != nil {
 		return err
 	}
@@ -44,11 +43,9 @@ func emptyExpression(tokens []types.Token) error {
 }
 
 func unbalancedParentheses(tokens []types.Token) error {
-
 	var open, close int
 
 	for _, token := range tokens {
-
 		switch token.Value {
 		case "(":
 			open++
@@ -70,19 +67,14 @@ func unbalancedParentheses(tokens []types.Token) error {
 }
 
 func notEnoughOperands(tokens []types.Token) error {
-
 	var isPrevBinaryOp bool
 
 	for _, token := range tokens {
-
 		if token.Type == types.BinaryOp {
-
 			if isPrevBinaryOp {
 				return errors.New("not enough operands")
 			}
-
 			isPrevBinaryOp = true
-
 		} else {
 			isPrevBinaryOp = false
 		}
@@ -100,19 +92,14 @@ func notEnoughOperands(tokens []types.Token) error {
 }
 
 func notEnoughOperators(tokens []types.Token) error {
-
 	var isPrevOperand bool
 
 	for _, token := range tokens {
-
 		if token.Type == types.Number {
-
 			if isPrevOperand {
 				return errors.New("not enough operators")
 			}
-
 			isPrevOperand = true
-
 		} else {
 			isPrevOperand = false
 		}
@@ -123,21 +110,16 @@ func notEnoughOperators(tokens []types.Token) error {
 
 // деление на ноль до этапа раскрытия скобок
 func divisionByZero(tokens []types.Token) error {
-
 	var isPrevDivisor bool
 
 	for _, token := range tokens {
-
 		if isPrevDivisor && token.Type == types.Number {
-
 			v, err := strconv.ParseFloat(token.Value, 64)
-
 			if err != nil {
 				return errors.New("can't parse float")
 			}
 
 			if comparator.Float64Compare(v, 0) {
-
 				return errors.New("division by zero")
 			}
 		}

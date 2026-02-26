@@ -9,7 +9,6 @@ import (
 )
 
 func ParseTokens(str string) ([]types.Token, error) {
-
 	tokens := make([]types.Token, 0)
 
 	var currentNumber strings.Builder
@@ -17,9 +16,7 @@ func ParseTokens(str string) ([]types.Token, error) {
 	var hasDot bool
 
 	for i, symbol := range str {
-
 		if unicode.IsDigit(symbol) {
-
 			currentNumber.WriteRune(symbol)
 
 			if i == len(str)-1 {
@@ -28,10 +25,8 @@ func ParseTokens(str string) ([]types.Token, error) {
 				if len(tokens) != 0 && tokens[len(tokens)-1].Value == ")" {
 					tokens = append(tokens, types.Token{Type: types.BinaryOp, Value: "*"})
 				}
-
 				tokens = append(tokens, types.Token{Type: types.Number, Value: currentNumber.String()})
 			}
-
 			continue
 		}
 
@@ -39,15 +34,12 @@ func ParseTokens(str string) ([]types.Token, error) {
 			currentNumber.WriteRune(symbol)
 
 			if hasDot {
-
 				return nil, errors.New("second dot in number")
 			}
 
 			if i == len(str)-1 {
-
 				tokens = append(tokens, types.Token{Type: types.Number, Value: currentNumber.String()})
 			}
-
 			hasDot = true
 
 			continue
@@ -71,9 +63,7 @@ func ParseTokens(str string) ([]types.Token, error) {
 		}
 
 		switch symbol {
-
 		case '+', '-':
-
 			curToken := types.Token{Value: string(symbol)}
 
 			if len(tokens) == 0 ||
@@ -83,16 +73,13 @@ func ParseTokens(str string) ([]types.Token, error) {
 
 				curToken.Type = types.UnaryOp
 			} else {
-
 				curToken.Type = types.BinaryOp
 			}
 
 			tokens = append(tokens, curToken)
 
 		case '*', '/':
-
 			tokens = append(tokens, types.Token{Type: types.BinaryOp, Value: string(symbol)})
-
 		case '(', ')':
 
 			// неявное умножение, если после числа или ')' стоит '('
@@ -103,7 +90,6 @@ func ParseTokens(str string) ([]types.Token, error) {
 					tokens = append(tokens, types.Token{Type: types.BinaryOp, Value: "*"})
 				}
 			}
-
 			tokens = append(tokens, types.Token{Type: types.Parenthesis, Value: string(symbol)})
 
 		default:
@@ -121,9 +107,7 @@ func Priority(token types.Token) int {
 	}
 
 	if token.Type == types.BinaryOp {
-
 		switch token.Value {
-
 		case "*", "/":
 			return 2
 

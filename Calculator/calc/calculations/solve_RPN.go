@@ -13,17 +13,12 @@ import (
 
 // Reverse Polish Notation
 func SolveRPN(outQueue []types.Token) (float64, error) {
-
 	var polishStack stack.Stack[float64]
 
 	for _, token := range outQueue {
-
 		switch token.Type {
-
 		case types.BinaryOp:
-
 			top, err := polishStack.Top()
-
 			if err != nil {
 				return 0, errors.New("not enough operands")
 			}
@@ -32,7 +27,6 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 			polishStack.Pop()
 
 			top, err = polishStack.Top()
-
 			if err != nil {
 				return 0, errors.New("not enough operands")
 			}
@@ -42,12 +36,10 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 
 			switch token.Value {
 			case "*":
-
 				result := leftOperand * rightOperand
 				polishStack.Push(result)
 
 			case "/":
-
 				if comparator.Float64Compare(rightOperand, 0.0) {
 					return 0, errors.New("division by zero")
 				}
@@ -56,20 +48,16 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 				polishStack.Push(result)
 
 			case "-":
-
 				result := leftOperand - rightOperand
 				polishStack.Push(result)
 
 			case "+":
-
 				result := leftOperand + rightOperand
 				polishStack.Push(result)
 			}
 
 		case types.UnaryOp:
-
 			top, err := polishStack.Top()
-
 			if err != nil {
 				return 0, errors.New("not enough operands")
 			}
@@ -84,15 +72,12 @@ func SolveRPN(outQueue []types.Token) (float64, error) {
 
 			case "-":
 				result := -operand
-
 				polishStack.Push(result)
 			}
 
 		default:
-
-			res, parseErr := strconv.ParseFloat(token.Value, 64)
-
-			if parseErr != nil {
+			res, err := strconv.ParseFloat(token.Value, 64)
+			if err != nil {
 				return 0, errors.New("can't parse float")
 			}
 

@@ -19,7 +19,6 @@ type errorTestCase struct {
 }
 
 func TestCalc(t *testing.T) {
-
 	noexceptTests := [][]testcase{
 		testAddition,
 		testSubtraction,
@@ -37,23 +36,19 @@ func TestCalc(t *testing.T) {
 
 	// Not error test cases
 	for _, tests := range noexceptTests {
-
 		for i, test := range tests {
-
 			result, err := Calculate(test.input)
 
 			if err != nil {
 				t.Logf("Fatal error: %s. Test: %s, № %v", err.Error(), test.name, i)
 				t.FailNow()
 			}
-
 			assert.InDeltaf(test.expected, result, 1.0e-9, "Error. Test: %s, %v.\nExpected: %v\nGot:      %v\n", test.name, i, test.expected, result)
 		}
 	}
 
 	// Error test cases
 	for i, test := range errortests {
-
 		_, err := Calculate(test.input)
 
 		assert.EqualErrorf(err, test.expectedError, "Expected error: \"%s\", got: nil. Test: %s, № %v", test.expectedError, test.name, i)

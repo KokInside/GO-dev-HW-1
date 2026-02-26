@@ -7,9 +7,7 @@ import (
 )
 
 func Calculate(expression string) (float64, error) {
-
 	tokens, err := tokenizer.ParseTokens(expression)
-
 	if err != nil {
 		return 0, err
 	}
@@ -23,7 +21,6 @@ func Calculate(expression string) (float64, error) {
 
 	// получить результат из польской нотации
 	result, err := calculations.SolveRPN(outQueue)
-
 	if err != nil {
 		return 0, err
 	}

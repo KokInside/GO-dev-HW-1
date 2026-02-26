@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-
 	args := os.Args
 
 	if len(args) <= 1 {
@@ -25,7 +24,6 @@ func main() {
 	expression := args[1]
 
 	result, err := calc.Calculate(expression)
-
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		return
