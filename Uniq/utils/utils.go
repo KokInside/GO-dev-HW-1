@@ -1,4 +1,4 @@
-package strutils
+package utils
 
 import (
 	"bufio"
@@ -10,7 +10,7 @@ func ReadLines(reader io.Reader) ([]string, error) {
 
 	scanner := bufio.NewScanner(reader)
 
-	var lines []string
+	lines := make([]string, 0)
 
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
@@ -31,4 +31,17 @@ func ConcatStrings(str1, str2 *string) string {
 	builder.WriteString(*str2)
 
 	return builder.String()
+}
+
+func BoolCount(bools ...bool) int {
+
+	var counter int
+
+	for _, b := range bools {
+		if b {
+			counter++
+		}
+	}
+
+	return counter
 }

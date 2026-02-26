@@ -1,10 +1,10 @@
 package options
 
 type Options struct {
-	C bool
-	D bool
-	U bool
-	I bool
-	F int
-	S int
+	Count      bool // -c flag
+	Repeated   bool // -d flag
+	Unique     bool // -u flag
+	IgnoreCase bool // -i flag
+	SkipFields int  // -f flag
+	SkipChars  int  // -s flag
 }

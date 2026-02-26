@@ -7,30 +7,30 @@ import (
 	"os"
 
 	"uniq/options"
-	"uniq/strutils"
 	"uniq/uniq"
+	"uniq/utils"
 )
 
 func main() {
 
 	// объявление флагов
-	var cFlag = flag.Bool("c", false, "Count the number of occurrences of a string in the input data.")
+	cFlag := flag.Bool("c", false, "Count the number of occurrences of a string in the input data.")
 
-	var dFlag = flag.Bool("d", false, "Output only those lines that are repeated in the input data.")
+	dFlag := flag.Bool("d", false, "Output only those lines that are repeated in the input data.")
 
-	var uFlag = flag.Bool("u", false, "Output only those lines that are not repeated in the input data.")
+	uFlag := flag.Bool("u", false, "Output only those lines that are not repeated in the input data.")
 
-	var iFlag = flag.Bool("i", false, "Ignore letter case.")
+	iFlag := flag.Bool("i", false, "Ignore letter case.")
 
-	var fFlag = flag.Int("f", 0, "Ignore the first [num_fields] fields in a row. A field in a row is a non-empty set of characters separated by a space.")
+	fFlag := flag.Int("f", 0, "Ignore the first [num_fields] fields in a row. A field in a row is a non-empty set of characters separated by a space.")
 
-	var sFlag = flag.Int("s", 0, "Ignore the first [num_chars] characters in a string. When used with the -f option, the first characters after [num_fields] fields are taken into account (ignoring the space separator after the last field).")
+	sFlag := flag.Int("s", 0, "Ignore the first [num_chars] characters in a string. When used with the -f option, the first characters after [num_fields] fields are taken into account (ignoring the space separator after the last field).")
 
-	var helpFlag = flag.Bool("help", false, "Display this help and exit")
+	helpFlag := flag.Bool("help", false, "Display this help and exit")
 
 	flag.Parse()
 
-	if *helpFlag == true {
+	if *helpFlag {
 		fmt.Println("Usage: uniq [-c | -d | -u] [-i] [-f num] [-s chars] [INPUT_FILE [OUTPUT_FILE]]")
 		fmt.Println("Filter adjacent matching lines from INPUT_FILE (or standard input),\nwriting to OUTPUT_FILE (or standard output).")
 		fmt.Println("")
@@ -39,7 +39,14 @@ func main() {
 		return
 	}
 
-	options := options.Options{C: *cFlag, D: *dFlag, U: *uFlag, I: *iFlag, F: *fFlag, S: *sFlag}
+	options := options.Options{
+		Count:      *cFlag,
+		Repeated:   *dFlag,
+		Unique:     *uFlag,
+		IgnoreCase: *iFlag,
+		SkipFields: *fFlag,
+		SkipChars:  *sFlag,
+	}
 
 	// поток ввода
 	var reader io.Reader
@@ -101,24 +108,25 @@ func main() {
 		return
 	}
 
-	lines, readErr := strutils.ReadLines(reader)
+	lines, err := utils.ReadLines(reader)
 
-	if readErr != nil {
-		fmt.Println(readErr.Error())
+	if err != nil {
+		fmt.Println(err)
 		return
 	}
 
-	result, uniqErr := uniq.Uniq(lines, options)
+	result, err := uniq.Uniq(lines, options)
 
-	if uniqErr != nil {
-		fmt.Println(uniqErr.Error())
+	if err != nil {
+		fmt.Println(err)
 		return
 	}
 
 	for i, uniqLine := range result {
+
 		writer.Write([]byte(uniqLine))
 
-		if i != len(result) {
+		if i != len(result)-1 {
 
 			writer.Write([]byte("\n"))
 		}

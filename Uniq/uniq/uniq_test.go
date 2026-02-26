@@ -1,9 +1,10 @@
 package uniq
 
 import (
-	"slices"
 	"testing"
 	"uniq/options"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type testCase struct {
@@ -24,13 +25,15 @@ func TestUniq(t *testing.T) {
 
 	allTests := [][]testCase{
 		testsNoParemeters,
-		tests_c_Flag,
-		tests_d_Flag,
-		tests_u_Flag,
-		tests_i_Flag,
-		tests_f_Flag,
-		tests_s_Flag,
+		testCountFlag,
+		testsRepeatedFlag,
+		testsUniqueFlag,
+		testsIgnoreCaseFlag,
+		testsSkipFieldsFlag,
+		testsSkipCharsFlag,
 	}
+
+	assert := assert.New(t)
 
 	for _, tests := range allTests {
 
@@ -38,13 +41,9 @@ func TestUniq(t *testing.T) {
 
 			result, err := Uniq(test.input, test.options)
 
-			if err != nil {
-				t.Logf("Fatal error: %s. Test: %v, № %v", err.Error(), test.name, i)
-				t.FailNow()
-			}
+			if assert.NoErrorf(err, "Fatal error. Test: %v, № %v", test.name, i) {
 
-			if !slices.Equal(result, test.expected) {
-				t.Errorf("Error: test: %v, № %v.\nexpected: %v\nGet     : %v\n", test.name, i, test.expected, result)
+				assert.Equalf(test.expected, result, "Error: test: %v, № %v.\nExpected: %v\nGot     : %v\n", test.name, i, test.expected, result)
 			}
 		}
 	}
@@ -52,23 +51,20 @@ func TestUniq(t *testing.T) {
 
 func TestUniqError(t *testing.T) {
 	allErrorTests := [][]errortestCase{
-		testDU_FlagsError,
-		testNegativeF_FlagError,
-		testNegativeS_FlagError,
+		testCountRepeatedUniqueFlagsError,
+		testSkipFieldsFlagError,
+		testSkipCharsFlagError,
 	}
 
+	assert := assert.New(t)
+
 	for _, tests := range allErrorTests {
+
 		for i, test := range tests {
 
 			_, err := Uniq(test.input, test.options)
 
-			if err == nil {
-				t.Errorf("expected error, got nil. Test: %s, № %v", test.name, i)
-			}
-
-			if err.Error() != test.expectedError {
-				t.Errorf("expected error: %s, got %s.\nTest: %s, № %v", test.expectedError, err.Error(), test.name, i)
-			}
+			assert.EqualErrorf(err, test.expectedError, "Expected error: \"%s\", got \"%s\".\nTest: %s, № %v", test.expectedError, err.Error(), test.name, i)
 		}
 	}
 }
@@ -133,7 +129,7 @@ var testsNoParemeters []testCase = []testCase{
 	},
 }
 
-var tests_c_Flag []testCase = []testCase{
+var testCountFlag []testCase = []testCase{
 	{
 		name: "-c flag",
 		input: []string{
@@ -177,7 +173,7 @@ var tests_c_Flag []testCase = []testCase{
 			"    1 hello",
 			"    1 ",
 		},
-		options: options.Options{C: true},
+		options: options.Options{Count: true},
 	},
 	{
 		name: "-c flag",
@@ -205,7 +201,7 @@ var tests_c_Flag []testCase = []testCase{
 			"    1 ",
 			"    2 omega",
 		},
-		options: options.Options{C: true},
+		options: options.Options{Count: true},
 	},
 	{
 		name: "-c flag",
@@ -226,7 +222,7 @@ var tests_c_Flag []testCase = []testCase{
 			"    2    ",
 			"    2 line",
 		},
-		options: options.Options{C: true},
+		options: options.Options{Count: true},
 	},
 	{
 		name: "-c flag",
@@ -246,11 +242,11 @@ var tests_c_Flag []testCase = []testCase{
 			"    2 single",
 			"    1 	 ",
 		},
-		options: options.Options{C: true},
+		options: options.Options{Count: true},
 	},
 }
 
-var tests_d_Flag []testCase = []testCase{
+var testsRepeatedFlag []testCase = []testCase{
 	{
 		name: "-d flag",
 		input: []string{
@@ -285,7 +281,7 @@ var tests_d_Flag []testCase = []testCase{
 			"",
 			" ",
 		},
-		options: options.Options{D: true},
+		options: options.Options{Repeated: true},
 	},
 	{
 		name: "-d flag",
@@ -304,7 +300,7 @@ var tests_d_Flag []testCase = []testCase{
 			"one",
 			"two",
 		},
-		options: options.Options{D: true},
+		options: options.Options{Repeated: true},
 	},
 	{
 		name: "-d flag",
@@ -326,11 +322,11 @@ var tests_d_Flag []testCase = []testCase{
 			"y",
 			"x",
 		},
-		options: options.Options{D: true},
+		options: options.Options{Repeated: true},
 	},
 }
 
-var tests_u_Flag []testCase = []testCase{
+var testsUniqueFlag []testCase = []testCase{
 	{
 		name: "-u flag",
 		input: []string{
@@ -370,7 +366,7 @@ var tests_u_Flag []testCase = []testCase{
 			"hello",
 			"",
 		},
-		options: options.Options{U: true},
+		options: options.Options{Unique: true},
 	},
 	{
 		name: "-u flag",
@@ -390,7 +386,7 @@ var tests_u_Flag []testCase = []testCase{
 			"fifth",
 			"second",
 		},
-		options: options.Options{U: true},
+		options: options.Options{Unique: true},
 	},
 	{
 		name: "-u flag",
@@ -410,11 +406,11 @@ var tests_u_Flag []testCase = []testCase{
 			"banana",
 			"apple",
 		},
-		options: options.Options{U: true},
+		options: options.Options{Unique: true},
 	},
 }
 
-var tests_i_Flag []testCase = []testCase{
+var testsIgnoreCaseFlag []testCase = []testCase{
 	{
 		name: "-i flag",
 		input: []string{
@@ -466,11 +462,11 @@ var tests_i_Flag []testCase = []testCase{
 			"hELlo",
 			"",
 		},
-		options: options.Options{I: true},
+		options: options.Options{IgnoreCase: true},
 	},
 }
 
-var tests_f_Flag []testCase = []testCase{
+var testsSkipFieldsFlag []testCase = []testCase{
 	{
 		name: "-f flag",
 		input: []string{
@@ -498,7 +494,7 @@ var tests_f_Flag []testCase = []testCase{
 			"22.03.25 hello",
 			"23.03.25 Today we gathered moss for my uncle's wedding.",
 		},
-		options: options.Options{F: 1},
+		options: options.Options{SkipFields: 1},
 	},
 	{
 		name: "-f flag",
@@ -517,7 +513,7 @@ var tests_f_Flag []testCase = []testCase{
 			"2026-02-18 INFO started process A",
 			"INFO started process A",
 		},
-		options: options.Options{F: 1},
+		options: options.Options{SkipFields: 1},
 	},
 	{
 		name: "-f flag",
@@ -531,11 +527,11 @@ var tests_f_Flag []testCase = []testCase{
 			"A BB C",
 			"XYZ 11Y Z",
 		},
-		options: options.Options{F: 2},
+		options: options.Options{SkipFields: 2},
 	},
 }
 
-var tests_s_Flag []testCase = []testCase{
+var testsSkipCharsFlag []testCase = []testCase{
 	{
 		name: "-s flag",
 		input: []string{
@@ -549,52 +545,53 @@ var tests_s_Flag []testCase = []testCase{
 		expected: []string{
 			"ABCfoobar",
 		},
-		options: options.Options{S: 3},
+		options: options.Options{SkipChars: 3},
 	},
 }
 
 // Error cases
 
-var testDU_FlagsError []errortestCase = []errortestCase{
+var testCountRepeatedUniqueFlagsError []errortestCase = []errortestCase{
 	{
-		name: "-d and -u flags used simultaneously",
+		name: "Unique -c, -d, -u",
 		input: []string{
 			"Some input",
 			"Some output",
 		},
-		options:       options.Options{D: true, U: true},
-		expectedError: "Flags -d and -u can't be used simultaneously.",
+		options:       options.Options{Repeated: true, Unique: true},
+		expectedError: "Only one flag of -c, -d and -u can be used.",
 	},
 	{
-		name: "-d and -u flags used simultaneously",
+		name: "Unique -c, -d, -u",
 		input: []string{
 			"Some input",
 			"Some output",
 		},
-		options:       options.Options{D: true, U: true, I: true},
-		expectedError: "Flags -d and -u can't be used simultaneously.",
+		options:       options.Options{Count: true, Repeated: true, Unique: true, IgnoreCase: true},
+		expectedError: "Only one flag of -c, -d and -u can be used.",
 	},
 	{
-		name: "-d and -u flags used simultaneously",
+		name: "Unique -c, -d, -u",
 		input: []string{
 			"Some input",
 			"Some output",
 		},
 
-		options:       options.Options{D: true, U: true, I: true, C: true},
-		expectedError: "Flags -d and -u can't be used simultaneously.",
+		options:       options.Options{Repeated: true, Unique: true, IgnoreCase: true, Count: true},
+		expectedError: "Only one flag of -c, -d and -u can be used.",
 	},
 }
 
-var testNegativeF_FlagError []errortestCase = []errortestCase{
+var testSkipFieldsFlagError []errortestCase = []errortestCase{
 	{
 		name: "Negative -f flag",
 		input: []string{
 			"Some text",
 			"some text",
 			"one more text",
+			"what text ?",
 		},
-		options:       options.Options{F: -11},
+		options:       options.Options{SkipFields: -11},
 		expectedError: "[num_fields] must be positive",
 	},
 	{
@@ -603,13 +600,14 @@ var testNegativeF_FlagError []errortestCase = []errortestCase{
 			"Some text",
 			"some text",
 			"one more text",
+			"test textxxx",
 		},
-		options:       options.Options{F: -1, C: true, U: true, I: true},
+		options:       options.Options{SkipFields: -1, Count: true, IgnoreCase: true},
 		expectedError: "[num_fields] must be positive",
 	},
 }
 
-var testNegativeS_FlagError []errortestCase = []errortestCase{
+var testSkipCharsFlagError []errortestCase = []errortestCase{
 	{
 		name: "Negative -s flag",
 		input: []string{
@@ -617,17 +615,17 @@ var testNegativeS_FlagError []errortestCase = []errortestCase{
 			"some text",
 			"one more text",
 		},
-		options:       options.Options{S: -11},
+		options:       options.Options{SkipChars: -11},
 		expectedError: "[num_chars] must be positive",
 	},
 	{
-		name: "Negative -f flag",
+		name: "Negative -s flag",
 		input: []string{
 			"Some text",
 			"some text",
 			"one more text",
 		},
-		options:       options.Options{S: -1, C: true, D: true},
+		options:       options.Options{SkipChars: -1, Repeated: true},
 		expectedError: "[num_chars] must be positive",
 	},
 }

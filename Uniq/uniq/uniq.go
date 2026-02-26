@@ -2,23 +2,21 @@ package uniq
 
 import (
 	"errors"
-	"strconv"
-	"strings"
+	"uniq/flagchecker"
 	"uniq/options"
-	"uniq/strutils"
-	"uniq/truncate"
+	"uniq/utils"
 )
 
 func Uniq(input []string, options options.Options) ([]string, error) {
 
-	var result []string
+	result := make([]string, 0)
 
-	if options.D && options.U {
-		return nil, errors.New("Flags -d and -u can't be used simultaneously.")
+	if utils.BoolCount(options.Count, options.Repeated, options.Unique) > 1 {
+		return nil, errors.New("Only one flag of -c, -d and -u can be used.")
 	}
 
 	// первая ли это строка ввода
-	var isFirstString bool = true
+	isFirstString := true
 
 	// хранит количество встречаний строк
 	var repeatCount int
@@ -32,63 +30,32 @@ func Uniq(input []string, options options.Options) ([]string, error) {
 
 	for _, line := range input {
 
-		var curString string = line
+		curString := line
 
 		// учитывать регистр ?
-		if options.I {
-			curString = strings.ToLower(curString)
-		}
+		curString = flagchecker.CheckIgnoreCase(curString, options)
 
 		// флаг -f
-		if options.F != 0 {
-			f_FlagErr := truncate.TruncateFields(&curString, options.F)
+		curString, err := flagchecker.CheckSkipFields(curString, options)
 
-			if f_FlagErr != nil {
-				return nil, f_FlagErr
-			}
+		if err != nil {
+			return nil, err
 		}
 
 		// флаг -s
-		if options.S != 0 {
-			s_FlagErr := truncate.TruncateSymbols(&curString, options.S)
+		curString, err = flagchecker.CheckSkipChars(curString, options)
 
-			if s_FlagErr != nil {
-				return nil, s_FlagErr
-			}
+		if err != nil {
+			return nil, err
 		}
 
 		// Если встретили новую строку
 		if prevString != curString || isFirstString {
 
-			if options.C {
-				var prefix string = "    " + strconv.Itoa(repeatCount) + " "
-				prevStringToReturn = strutils.ConcatStrings(&prefix, &prevString)
-			}
+			newLine, updated := flagchecker.CheckUniqueFlags(line, prevStringToReturn, prevString, options, isStringRepeat, isFirstString, repeatCount)
 
-			if options.D {
-
-				if isStringRepeat && !isFirstString {
-
-					result = append(result, prevStringToReturn)
-				}
-
-			} else if options.U {
-
-				if isStringRepeat == false && !isFirstString {
-
-					result = append(result, prevStringToReturn)
-				}
-
-			} else if options.C {
-
-				if !isFirstString {
-
-					result = append(result, prevStringToReturn)
-				}
-
-			} else {
-
-				result = append(result, line)
+			if updated {
+				result = append(result, newLine)
 			}
 
 			repeatCount = 1
@@ -107,28 +74,11 @@ func Uniq(input []string, options options.Options) ([]string, error) {
 	}
 
 	// нужно обработать последнюю введённую строку в соответствии с флагами
+	if utils.BoolCount(options.Count, options.Repeated, options.Unique) != 0 {
+		newLine, updated := flagchecker.CheckUniqueFlags("", prevStringToReturn, prevString, options, isStringRepeat, isFirstString, repeatCount)
 
-	if options.C {
-		var prefix string = "    " + strconv.Itoa(repeatCount) + " "
-		prevStringToReturn = strutils.ConcatStrings(&prefix, &prevString)
-	}
-
-	if options.D {
-
-		if isStringRepeat && !isFirstString {
-			result = append(result, prevStringToReturn)
-		}
-
-	} else if options.U && !isFirstString {
-
-		if !isStringRepeat {
-			result = append(result, prevStringToReturn)
-		}
-
-	} else if options.C {
-		if !isFirstString {
-
-			result = append(result, prevStringToReturn)
+		if updated {
+			result = append(result, newLine)
 		}
 	}
 
