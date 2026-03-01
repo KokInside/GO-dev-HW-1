@@ -22,9 +22,16 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 		}
 
 		if token.Type == types.BinaryOp {
-			for top, err := operatorStack.Top(); operatorStack.Size() != 0 && tokenizer.Priority(top) >= tokenizer.Priority(token); top, err = operatorStack.Top() {
+			curProirity := tokenizer.Priority(token)
+
+			for operatorStack.Size() != 0 {
+				top, err := operatorStack.Top()
 				if err != nil {
 					return nil
+				}
+
+				if tokenizer.Priority(top) < curProirity {
+					break
 				}
 
 				outQueue = append(outQueue, top)
