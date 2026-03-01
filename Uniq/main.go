@@ -82,16 +82,6 @@ func main() {
 			}
 		}()
 
-		// outputFile, err := os.OpenFile(flag.Arg(1), os.O_WRONLY|os.O_TRUNC, 0777)
-		// if err != nil {
-
-		// 	outputFile, err = os.Create(flag.Arg(1))
-		// 	if err != nil {
-		// 		fmt.Println(err)
-		// 		return
-		// 	}
-		// }
-
 		outputFile, err := os.Create(flag.Arg(1))
 		if err != nil {
 			fmt.Println(err)
