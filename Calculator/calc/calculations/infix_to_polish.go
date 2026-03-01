@@ -6,6 +6,7 @@ import (
 	"calc/types"
 )
 
+// реализованный алгоритм сортировочной станции для преобразования инфиксной записи в польскую
 // https://ru.wikipedia.org/wiki/%D0%90%D0%BB%D0%B3%D0%BE%D1%80%D0%B8%D1%82%D0%BC_%D1%81%D0%BE%D1%80%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%BE%D1%87%D0%BD%D0%BE%D0%B9_%D1%81%D1%82%D0%B0%D0%BD%D1%86%D0%B8%D0%B8
 
 // Infix notation -> Polish notation
@@ -27,7 +28,10 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 				}
 
 				outQueue = append(outQueue, top)
-				operatorStack.Pop()
+
+				if operatorStack.Pop() != nil {
+					return nil
+				}
 			}
 			operatorStack.Push(token)
 			continue
@@ -48,9 +52,13 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 					}
 
 					outQueue = append(outQueue, top)
-					operatorStack.Pop()
+					if operatorStack.Pop() != nil {
+						return nil
+					}
 				}
-				operatorStack.Pop()
+				if operatorStack.Pop() != nil {
+					return nil
+				}
 			}
 			continue
 		}
@@ -63,7 +71,9 @@ func InfixToPolish(tokens []types.Token) []types.Token {
 		}
 
 		outQueue = append(outQueue, top)
-		operatorStack.Pop()
+		if operatorStack.Pop() != nil {
+			return nil
+		}
 	}
 	return outQueue
 }

@@ -33,7 +33,6 @@ func ValidateTokens(tokens []types.Token) error {
 }
 
 // Validators:
-
 func emptyExpression(tokens []types.Token) error {
 	if len(tokens) == 0 {
 		return errors.New("empty expression")

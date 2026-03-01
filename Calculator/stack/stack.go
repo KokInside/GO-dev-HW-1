@@ -10,12 +10,12 @@ func (s *Stack[T]) Push(value T) {
 	s.stack = append(s.stack, value)
 }
 
-func (s *Stack[T]) Pop() {
+func (s *Stack[T]) Pop() error {
 	if len(s.stack) != 0 {
 		s.stack = s.stack[:len(s.stack)-1]
-		return
+		return nil
 	}
-	panic("pop empty stack")
+	return errors.New("pop empty stack")
 }
 
 func (s *Stack[T]) Top() (T, error) {

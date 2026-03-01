@@ -170,7 +170,6 @@ var testSpaces []testcase = []testcase{
 }
 
 // Error Test Cases
-
 var errortests []errorTestCase = []errorTestCase{
 	{"unbalancedParentheses", "(7*4+9)+87)", "missing ("},
 	{"unbalancedParentheses", ")(5+7)/443+73", "missing ("},
