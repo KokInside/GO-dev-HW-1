@@ -13,8 +13,10 @@ func TruncateFields(str string, fieldCount int) (string, error) {
 	var prevSymbol bool
 	var wordCount int
 
-	for i, s := range str {
-		if unicode.IsSpace(s) {
+	runes := []rune(str)
+
+	for i, r := range runes {
+		if unicode.IsSpace(r) {
 			if prevSymbol {
 				wordCount++
 				prevSymbol = false
@@ -25,7 +27,7 @@ func TruncateFields(str string, fieldCount int) (string, error) {
 		}
 
 		if wordCount == fieldCount {
-			return (str)[i:], nil
+			return string(runes[i:]), nil
 		}
 	}
 
@@ -33,14 +35,15 @@ func TruncateFields(str string, fieldCount int) (string, error) {
 }
 
 func TruncateSymbols(str string, symbolCount int) (string, error) {
-
 	if symbolCount < 0 {
 		return "", errors.New("[num_chars] must be positive")
 	}
 
-	if symbolCount > len(str) {
+	runes := []rune(str)
+
+	if symbolCount > len(runes) {
 		return "", nil
 	}
 
-	return str[symbolCount:], nil
+	return string(runes[symbolCount:]), nil
 }
