@@ -31,6 +31,14 @@ func TestUniq(t *testing.T) {
 		testsIgnoreCaseFlag,
 		testsSkipFieldsFlag,
 		testsSkipCharsFlag,
+
+		testsNoParemetersRus,
+		testsCountFlagRus,
+		testsRepeatedFlagRus,
+		testsUniqueFlagRus,
+		testsIgnoreCaseFlagRus,
+		testsSkipFieldsFlagRus,
+		testsSkipCharsFlagRus,
 	}
 
 	assert := assert.New(t)
@@ -541,6 +549,236 @@ var testsSkipCharsFlag []testCase = []testCase{
 			"ABCfoobar",
 		},
 		options: options.Options{SkipChars: 3},
+	},
+}
+
+// Rus tests
+
+var testsNoParemetersRus []testCase = []testCase{
+	{
+		name: "noParametersRus",
+		input: []string{
+			"яблоко",
+			"яблоко",
+			"Яблоко",
+			"яблоко",
+			"банан",
+			"банан",
+			"",
+			"",
+			"груша",
+		},
+		expected: []string{
+			"яблоко",
+			"Яблоко",
+			"яблоко",
+			"банан",
+			"",
+			"груша",
+		},
+	},
+	{
+		name: "noParametersRus",
+		input: []string{
+			" пробел",
+			"пробел",
+			"пробел ",
+			"пробел ",
+			" пробел",
+		},
+		expected: []string{
+			" пробел",
+			"пробел",
+			"пробел ",
+			" пробел",
+		},
+	},
+}
+
+var testsCountFlagRus []testCase = []testCase{
+	{
+		name: "-c flag Rus",
+		input: []string{
+			"раз",
+			"раз",
+			"два",
+			"три",
+			"три",
+			"три",
+			"два",
+		},
+		expected: []string{
+			"    2 раз",
+			"    1 два",
+			"    3 три",
+			"    1 два",
+		},
+		options: options.Options{Count: true},
+	},
+	{
+		name: "-c flag Rus",
+		input: []string{
+			"Тест",
+			"тест",
+			"тест",
+			"ТЕСТ",
+			"тест",
+		},
+		expected: []string{
+			"    1 Тест",
+			"    2 тест",
+			"    1 ТЕСТ",
+			"    1 тест",
+		},
+		options: options.Options{Count: true},
+	},
+}
+
+var testsRepeatedFlagRus []testCase = []testCase{
+	{
+		name: "-d flag Rus",
+		input: []string{
+			"яблоко",
+			"яблоко",
+			"банан",
+			"банан",
+			"банан",
+			"вишня",
+			"вишня",
+			"яблоко",
+			"банан",
+			"киви",
+		},
+		expected: []string{
+			"яблоко",
+			"банан",
+			"вишня",
+		},
+		options: options.Options{Repeated: true},
+	},
+	{
+		name: "-d flag Rus",
+		input: []string{
+			"яблоко",
+			"яблоко",
+			"банан",
+			"банан",
+			"банан",
+			"вишня",
+			"груша",
+			"груша",
+			"дыня",
+		},
+		expected: []string{
+			"яблоко",
+			"банан",
+			"груша",
+		},
+		options: options.Options{Repeated: true},
+	},
+}
+
+var testsUniqueFlagRus []testCase = []testCase{
+	{
+		name: "-u flag Rus",
+		input: []string{
+			"один",
+			"один",
+			"два",
+			"три",
+			"три",
+			"четыре",
+			"пять",
+			"пять",
+		},
+		expected: []string{
+			"два",
+			"четыре",
+		},
+		options: options.Options{Unique: true},
+	},
+	{
+		name: "-u flag Rus",
+		input: []string{
+			"яблоко",
+			"яблоко",
+			"банан",
+			"банан",
+			"банан",
+			"вишня",
+			"вишня",
+			"яблоко",
+			"банан",
+			"киви",
+			"манго",
+			"манго",
+		},
+		expected: []string{
+			"яблоко",
+			"банан",
+			"киви",
+		},
+		options: options.Options{Unique: true},
+	},
+}
+
+var testsIgnoreCaseFlagRus []testCase = []testCase{
+	{
+		name: "-i flag Rus",
+		input: []string{
+			"Яблоко",
+			"яблоко",
+			"Банан",
+			"БАНАН",
+			"банан",
+			"Вишня",
+			"ВИШНЯ",
+			"яблоко",
+			"банан",
+		},
+		expected: []string{
+			"Яблоко",
+			"Банан",
+			"Вишня",
+			"яблоко",
+			"банан",
+		},
+		options: options.Options{IgnoreCase: true},
+	},
+}
+
+var testsSkipFieldsFlagRus []testCase = []testCase{
+	{
+		name: "-f flag Rus",
+		input: []string{
+			"1 альфа бета",
+			"2 альфа бета",
+			"3 Альфа Бета",
+			"4 гамма",
+			"4 гамма",
+		},
+		expected: []string{
+			"1 альфа бета",
+		},
+		options: options.Options{SkipFields: 300},
+	},
+}
+
+var testsSkipCharsFlagRus []testCase = []testCase{
+	{
+		name: "-s flag Rus",
+		input: []string{
+			"2025-01-01 яблоко",
+			"2024-12-31 яблоко",
+			"2025-01-01 Яблоко",
+			"2025-01-02 банан",
+			"2025-01-02 банан",
+		},
+		expected: []string{
+			"2025-01-01 яблоко",
+			"2025-01-02 банан",
+		},
+		options: options.Options{SkipChars: 15},
 	},
 }
 
