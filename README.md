@@ -30,4 +30,29 @@ go build -o ./bin/
 
 ```bash
 ./bin/uniq [-c] [-d | -u] [-i] [-f num] [-s chars] [input_file [output_file]]
+
+## Calc
+
+### Запуск программы из файла:
+
+```bash
+go run main.go "[your expression]"
+```
+
+### Создание исполняемого файла:
+
+```bash
+go build -o ./bin/
+```
+
+### Запуск исполнямого файла:
+
+```bash
+./bin/calc "[your expression]"
+```
+
+### Запуск тестов:
+
+```bash
+go test -v ./calc/
 ```

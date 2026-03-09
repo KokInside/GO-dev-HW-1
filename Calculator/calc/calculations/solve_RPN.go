@@ -1,0 +1,102 @@
+package calculations
+
+import (
+	"calc/comparator"
+	"calc/stack"
+	"calc/types"
+
+	"errors"
+	"strconv"
+)
+
+// обратная польская нотация
+// https://ru.wikipedia.org/wiki/%D0%9E%D0%B1%D1%80%D0%B0%D1%82%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D0%BB%D1%8C%D1%81%D0%BA%D0%B0%D1%8F_%D0%B7%D0%B0%D0%BF%D0%B8%D1%81%D1%8C
+
+// Reverse Polish Notation
+func SolveRPN(outQueue []types.Token) (float64, error) {
+	var polishStack stack.Stack[float64]
+
+	for _, token := range outQueue {
+		switch token.Type {
+		case types.BinaryOp:
+			top, err := polishStack.Top()
+			if err != nil {
+				return 0, errors.New("not enough operands")
+			}
+
+			rightOperand := top
+			if polishStack.Pop() != nil {
+				return 0, errors.New("not enough operands")
+			}
+
+			top, err = polishStack.Top()
+			if err != nil {
+				return 0, errors.New("not enough operands")
+			}
+
+			leftOperand := top
+			if polishStack.Pop() != nil {
+				return 0, errors.New("not enough operands")
+			}
+
+			switch token.Value {
+			case "*":
+				result := leftOperand * rightOperand
+				polishStack.Push(result)
+
+			case "/":
+				if comparator.Float64Compare(rightOperand, 0.0) {
+					return 0, errors.New("division by zero")
+				}
+
+				result := leftOperand / rightOperand
+				polishStack.Push(result)
+
+			case "-":
+				result := leftOperand - rightOperand
+				polishStack.Push(result)
+
+			case "+":
+				result := leftOperand + rightOperand
+				polishStack.Push(result)
+			}
+
+		case types.UnaryOp:
+			top, err := polishStack.Top()
+			if err != nil {
+				return 0, errors.New("not enough operands")
+			}
+
+			operand := top
+			if polishStack.Pop() != nil {
+				return 0, errors.New("not enough operands")
+			}
+
+			switch token.Value {
+			case "+":
+				result := operand
+				polishStack.Push(result)
+
+			case "-":
+				result := -operand
+				polishStack.Push(result)
+			}
+
+		default:
+			res, err := strconv.ParseFloat(token.Value, 64)
+			if err != nil {
+				return 0, errors.New("can't parse float")
+			}
+
+			polishStack.Push(res)
+		}
+	}
+
+	top, err := polishStack.Top()
+
+	if err != nil {
+		return top, err
+	}
+
+	return top, nil
+}
